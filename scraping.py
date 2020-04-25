@@ -21,6 +21,16 @@ class Scraper:
         with open(path_name, 'wb') as fd:
             for chunk in r.iter_content(chunk_size=2000):
                 fd.write(chunk)
+    def parseTable(self, soup_data):
+        table = soup_data.findAll('table')[0]
+        numbers = table.findAll("th")[1:]
+        rows = table.findAll("tr")[1:]
+        dataset = []
+        for number, row in zip(numbers, rows):
+            day, tmp_link = row.findAll("td")
+            link = tmp_link.find('a').get('href')
+            dataset.append([number.find('p').text, day.text, link])       
+        return dataset
 
 class PathOperater:
     def __init__(self):
@@ -36,31 +46,7 @@ class PathOperater:
     def setDownlaodFileName(self, path, fileName):
         return os.path.join(self.current, path, fileName)
 
+
+
 if __name__ == '__main__':
-    base = "https://www.pref.yamanashi.jp"
-    index_html= "/koucho/coronavirus/info_coronavirus.html"
-    scr = Scraper(base)
-    # 発生状況等の取得
-    url2 = scr.getTargetUrl(index_html, 'info_coronavirus_prevention.html')
-    print(url2)
-    soup2 = scr.getContent(url2)
-    #テーブル情報を取得する
-    table = soup2.findAll('table')[0]
-    rows = table.findAll("tr")[1:]
-    for row in rows:
-        day = row.findAll("td")[0]
-        print(day)
-
-    exit()
-    elems = soup2.findAll(href=re.compile('pdf'),text=re.compile('報道資料'))
-    print(len(elems))
-    #pdf格納folderの作成
-    pathOp = PathOperater()
-    pathOp.createPath('pdf')
-    for e in elems:
-        print('{}:{}'.format(e.getText(),e.get('href')))
-        # 格納先のファイル名を作成
-        file_name = pathOp.setDownlaodFileName('pdf', pathOp.getFileName(e.get('href')))
-        scr.downloadPdf(e.get('href'), file_name)
-
-
+    print("main")

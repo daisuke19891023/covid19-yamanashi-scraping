@@ -36,22 +36,31 @@ class PathOperater:
     def setDownlaodFileName(self, path, fileName):
         return os.path.join(self.current, path, fileName)
 
-base = "https://www.pref.yamanashi.jp"
-index_html= "/koucho/coronavirus/info_coronavirus.html"
-scr = Scraper(base)
-# 発生状況等の取得
-url2 = scr.getTargetUrl(index_html, 'info_coronavirus_prevention.html')
-print(url2)
-soup2 = scr.getContent(url2)
-elems = soup2.findAll(href=re.compile('pdf'),text=re.compile('報道資料'))
-print(len(elems))
-#pdf格納folderの作成
-pathOp = PathOperater()
-pathOp.createPath('pdf')
-for e in elems:
-    print('{}:{}'.format(e.getText(),e.get('href')))
-    # 格納先のファイル名を作成
-    file_name = pathOp.setDownlaodFileName('pdf', pathOp.getFileName(e.get('href')))
-    scr.downloadPdf(e.get('href'), file_name)
+if __name__ == '__main__':
+    base = "https://www.pref.yamanashi.jp"
+    index_html= "/koucho/coronavirus/info_coronavirus.html"
+    scr = Scraper(base)
+    # 発生状況等の取得
+    url2 = scr.getTargetUrl(index_html, 'info_coronavirus_prevention.html')
+    print(url2)
+    soup2 = scr.getContent(url2)
+    #テーブル情報を取得する
+    table = soup2.findAll('table')[0]
+    rows = table.findAll("tr")[1:]
+    for row in rows:
+        day = row.findAll("td")[0]
+        print(day)
+
+    exit()
+    elems = soup2.findAll(href=re.compile('pdf'),text=re.compile('報道資料'))
+    print(len(elems))
+    #pdf格納folderの作成
+    pathOp = PathOperater()
+    pathOp.createPath('pdf')
+    for e in elems:
+        print('{}:{}'.format(e.getText(),e.get('href')))
+        # 格納先のファイル名を作成
+        file_name = pathOp.setDownlaodFileName('pdf', pathOp.getFileName(e.get('href')))
+        scr.downloadPdf(e.get('href'), file_name)
 
 

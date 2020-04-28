@@ -23,7 +23,7 @@ class Scraper:
         with open(path_name, 'wb') as fd:
             for chunk in r.iter_content(chunk_size=2000):
                 fd.write(chunk)
-    def parseTable(self, soup_data):
+    def parseSingleTable(self, soup_data):
         table = soup_data.findAll('table')[0]
         numbers = table.findAll("th")[1:]
         rows = table.findAll("tr")[1:]
@@ -40,6 +40,42 @@ class Scraper:
 
             dataset.append([number.find('p').text, ad_day_release, ad_day_proved, link])       
         return dataset
+    def findAllTable(self, soup_data):
+        return soup_data.findAll('table')
+    def parseContactsTable(self, table):
+        def convertDaysCountKV(items):
+            result = []
+            for item in items:
+                #誤字で日が件と表示されている箇所があるため、日と件の両方で分割
+                key, count, *_ = re.split(r'日|件', item)
+                result.append({'day':int(key), 'count':int(count)})
+            return result
+
+        result_list = []
+        items = table.findAll('tr')[1:]
+        res_dict =[]
+        for item in items:
+            #span
+            #td属性からテキストを取得
+            span, sum_number_tmp, individuals_tmp = item.findAll('td')
+            sum_number = sum_number_tmp.findAll('p')[0]
+            individuals = list(individuals_tmp.findAll('p')[0].text.strip().split('、'))
+            
+            #spanからreturnするdictonaryのlistを取得する
+            target_list = TimeUtil().getDatetimeDictFromString(span.text.strip())
+
+            #日ごとの件数をkvで取得
+            days_count_dict = convertDaysCountKV(individuals)
+
+            for day_count in days_count_dict:
+    
+                target_list = list(map(lambda x:{'日付':x['日付'], '小計': day_count['count'] if x['day'] == day_count['day'] else x['小計'], 'day':x['day']},target_list))
+
+            res_dict.extend(target_list)
+        #一次変数の'day'を消して返却
+        return list(map(lambda x:{'日付':x['日付'], '小計':x['小計']}, res_dict))
+
+
 
 class PathOperater:
     def __init__(self):

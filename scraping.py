@@ -29,14 +29,16 @@ class Scraper:
         rows = table.findAll("tr")[1:]
         dataset = []
         for number, row in zip(numbers, rows):
-            _, tmp = row.findAll("td")
+            day_proved, tmp = row.findAll("td")
             #dayにpタグが付いているパターンがある
             correct_date = tmp.findAll('a')[-1]
-            day = correct_date.getText()
-            ad_day = self.time_util.execute(day.strip())
+            day_release = correct_date.getText()
+            ad_day_release = self.time_util.executeConvert(day_release.strip())
+            ad_day_proved = self.time_util.executeConvert(day_proved.text.strip())
+
             link = correct_date.get('href')
 
-            dataset.append([number.find('p').text, ad_day, link])       
+            dataset.append([number.find('p').text, ad_day_release, ad_day_proved, link])       
         return dataset
 
 class PathOperater:

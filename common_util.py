@@ -8,6 +8,8 @@ class TimeUtil:
             '平成': datetime.datetime(1989, 1, 8)
         }
         self.wareki_pattern = r'令和|平成'
+        self.tz_jst_name = datetime.timezone(datetime.timedelta(hours=9), name='JST')
+        self.start_date = datetime.datetime(2020, 3, 1 ,tzinfo=self.tz_jst_name)
 
 
     def getWareki(self, dt_wareki):
@@ -27,19 +29,23 @@ class TimeUtil:
             result.append(int(ans))
         return result
 
-    def convert(self, wareki, y, m, d):
-        tz_jst_name = datetime.timezone(datetime.timedelta(hours=9), name='JST')
+    def convertToAD(self, wareki, y, m, d):
         base = self.WAREKI_FORMAT[wareki]
         base_y = base.year
-        result = datetime.datetime(base_y + y -1, m, d,tzinfo=tz_jst_name)
+        result = datetime.datetime(base_y + y -1, m, d,tzinfo=self.tz_jst_name)
         return result.isoformat()
-    def execute(self, datetime_string):
+    def executeConvert(self, datetime_string):
         wareki, other = self.getWareki(datetime_string)
         if wareki != None:
             y, m, d = self.getYMD(other)
-            return self.convert(wareki, y, m, d)
+            return self.convertToAD(wareki, y, m, d)
         else:
             return ""
+    def createDatetimeDict(self, N):
+        end_date = N.astimezone(self.tz_jst_name)
+        time_span = (end_date - self.start_date).days
+        return [{"日付":(self.start_date + datetime.timedelta(days=i)).isoformat(), "小計":0} for i in range(time_span)]
+    
 
 class StringUtil:
     def __init__(self):
@@ -50,3 +56,8 @@ class StringUtil:
             return False
         else:
             return True
+
+
+if __name__ == '__main__':
+    tm = TimeUtil()
+    print(tm.createDatetimeDict(datetime.datetime.now()))

@@ -12,7 +12,7 @@ import os
 class Pdf2Text:
     def __init__(self):
         super().__init__()
-    def execute(self):
+    def executeConvert(self):
         for path in glob.glob('./pdf/*'):
             input_path = path
             output_file = os.path.splitext(os.path.basename(input_path))[0]
@@ -87,4 +87,4 @@ class Pdf2Text:
                 f.write(text.encode('utf-8', "ignore"))
 if __name__ == '__main__':
     convert_txt = Pdf2Text()
-    convert_txt.execute()
+    convert_txt.executeConvert()

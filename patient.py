@@ -7,16 +7,12 @@ import os
 from common_util import StringUtil, TimeUtil
 from itertools import groupby
 import datetime
-if __name__ == '__main__':
-    base = "https://www.pref.yamanashi.jp"
-    index_html= "/koucho/coronavirus/info_coronavirus.html"
-    scr = Scraper(base)
+def getPatientDict(index_html, scr):
     # 発生状況等の取得
-    url2 = scr.getTargetUrl(index_html, 'info_coronavirus_prevention.html')
-    print(url2)
-    soup2 = scr.getContent(url2)
+    url = scr.getTargetUrl(index_html, 'info_coronavirus_prevention.html')
+    soup = scr.getContent(url)
     #テーブル情報を取得する
-    dataset = scr.parseSingleTable(soup2)
+    dataset = scr.parseSingleTable(soup)
 
     #pdf格納folderの作成
     pathOp = PathOperater()
@@ -36,10 +32,7 @@ if __name__ == '__main__':
             print('No:{} リリース日:{} 判明日:{} Link:{}'.format(data[0], data[1].strip(), data[2].strip(), output_path))
             patient_data_tmp.append({"No":data[0], "リリース日":data[1].strip(), "link": output_path})
             patients_summary_tmp.append(data[2].strip())
-            
-    text_tmp = json.dumps(patient_data_tmp,indent=4,ensure_ascii=False)
-    with open('./data_tmp.json', "wb") as f:
-        f.write(text_tmp.encode('utf-8', "ignore"))    
+ 
     #convertの実行
     convert_txt = Pdf2Text()
     convert_txt.executeConvert()
@@ -68,14 +61,7 @@ if __name__ == '__main__':
     print(patients_summary)
     patients_summary_data['data'] = sorted(patients_summary,key=lambda x:x['日付'])
 
-    #jsonファイルへの書き出し
-    result_json = {}
-    result_json['patient'] = patients   
-    result_json['patients_summary'] = patients_summary_data
-    text = json.dumps(result_json,indent=4,ensure_ascii=False)
-    with open('./data.json', "wb") as f:
-        f.write(text.encode('utf-8', "ignore"))
-
+    return patients, patients_summary_data
 
 
 

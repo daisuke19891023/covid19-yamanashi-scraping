@@ -16,7 +16,7 @@ if __name__ == '__main__':
     print(url2)
     soup2 = scr.getContent(url2)
     #テーブル情報を取得する
-    dataset = scr.parseTable(soup2)
+    dataset = scr.parseSingleTable(soup2)
 
     #pdf格納folderの作成
     pathOp = PathOperater()
@@ -66,7 +66,7 @@ if __name__ == '__main__':
         patients_summary = list(map(lambda x: {"日付":x["日付"], "小計":len(list(g)) if x['日付'] == k else x['小計']}, patients_summary))
 
     print(patients_summary)
-    patients_summary_data['data'] = patients_summary
+    patients_summary_data['data'] = sorted(patients_summary,key=lambda x:x['日付'])
 
     #jsonファイルへの書き出し
     result_json = {}

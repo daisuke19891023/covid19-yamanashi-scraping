@@ -29,9 +29,20 @@ def getPatientDict(index_html, scr):
             scr.downloadPdf(data[3], file_name)
             output_file = os.path.splitext(os.path.basename(file_name))[0]
             output_path = os.path.join('./text', output_file + '.txt')
-            print('No:{} リリース日:{} 判明日:{} Link:{}'.format(data[0], data[1].strip(), data[2].strip(), output_path))
-            patient_data_tmp.append({"No":data[0], "リリース日":data[1].strip(), "link": output_path})
-            patients_summary_tmp.append(data[2].strip())
+            isDuplicated, number_char = StringUtil().is_duplicate_data(data[0])
+
+            #重複している場合
+            if isDuplicated:
+                for n in number_char:
+                    print('No:{} リリース日:{} 判明日:{} Link:{}'.format(n, data[1].strip(), data[2].strip(), output_path))
+                    patient_data_tmp.append({"No":n, "リリース日":data[1].strip(), "link": output_path})
+                    patients_summary_tmp.append(data[2].strip())
+
+            #単一の場合
+            else:
+                print('No:{} リリース日:{} 判明日:{} Link:{}'.format(number_char, data[1].strip(), data[2].strip(), output_path))
+                patient_data_tmp.append({"No":number_char, "リリース日":data[1].strip(), "link": output_path})
+                patients_summary_tmp.append(data[2].strip())
  
     #convertの実行
     convert_txt = Pdf2Text()
@@ -43,7 +54,7 @@ def getPatientDict(index_html, scr):
 
     #patientの作成
     for tmp in patient_data_tmp:
-        result = parser.text2dict(tmp['link'])
+        result = parser.text2dict(tmp['No'], tmp['link'])
         result.update(tmp)
         del result['link']
         json_list.append(result)

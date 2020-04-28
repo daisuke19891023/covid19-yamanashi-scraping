@@ -92,12 +92,15 @@ class StringUtil:
             return False
         else:
             return True
+    def is_duplicate_data(self, number_char):
+        check = re.search(r',', number_char)
+        if check == None:
+            return False, number_char
+        else:
+            tmp = re.sub(r'県|内|例|目','',number_char)
+            return True, list(map(lambda x:'県内{}例目'.format(x), tmp.split(',')))
 
 
 if __name__ == '__main__':
-    tmu = TimeUtil()
-    samples = ['2月9日(日曜日)\n            ～2月15日(土曜日)', '2月2日(日曜日)\n            ～2月8日(土曜日)']
-    results = []
-    for sample in samples:
-        results.extend(tmu.getDatetimeDictFromString(sample))
-    print(results)
+    result, char = StringUtil().is_duplicate_data("県内10,11例目")
+    print(char)

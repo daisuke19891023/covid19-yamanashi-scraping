@@ -29,15 +29,13 @@ class Scraper:
         rows = table.findAll("tr")[1:]
         dataset = []
         for number, row in zip(numbers, rows):
-            day, tmp_link = row.findAll("td")
+            _, tmp = row.findAll("td")
             #dayにpタグが付いているパターンがある
-            # print("before", day.text)
-            # if day.findAll("p") != None:
-            #     day = day.findAll("p")[0]
-            # print("after", day.text)
-            link = tmp_link.find('a').get('href')
-            print(type(day.text))
-            ad_day = self.time_util.execute(day.text.strip())
+            correct_date = tmp.findAll('a')[-1]
+            day = correct_date.getText()
+            ad_day = self.time_util.execute(day.strip())
+            link = correct_date.get('href')
+
             dataset.append([number.find('p').text, ad_day, link])       
         return dataset
 

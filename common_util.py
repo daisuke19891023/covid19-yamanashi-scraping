@@ -40,3 +40,13 @@ class TimeUtil:
             return self.convert(wareki, y, m, d)
         else:
             return ""
+
+class StringUtil:
+    def __init__(self):
+        super().__init__()
+        self.exclude_char = r'県外'
+    def exclude_outside(self, full_with_str):
+        if re.search(self.exclude_char, full_with_str):
+            return False
+        else:
+            return True

@@ -18,7 +18,7 @@ if __name__ == '__main__':
     pathOp = PathOperater()
     pathOp.createPath('pdf')
     for data in dataset:
-        print('No:{}.:Day{}:Link{}'.format(data[0], data[1].strip(),data[2]))
+        print('No:{} Day:{} Link:{}'.format(data[0], data[1].strip(),data[2]))
         # 格納先のファイル名を作成
         file_name = pathOp.setDownlaodFileName('pdf', pathOp.getFileName(data[2]))
         scr.downloadPdf(data[2], file_name)

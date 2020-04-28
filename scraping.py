@@ -2,10 +2,12 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import os
+from common_util import TimeUtil
 
 class Scraper:
     def __init__(self, base):
         self.base = base
+        self.time_util = TimeUtil()
     def getTargetUrl(self, base_url, target_url):
         r = requests.get(self.base + base_url)
         r.encoding = r.apparent_encoding
@@ -28,8 +30,15 @@ class Scraper:
         dataset = []
         for number, row in zip(numbers, rows):
             day, tmp_link = row.findAll("td")
+            #dayにpタグが付いているパターンがある
+            # print("before", day.text)
+            # if day.findAll("p") != None:
+            #     day = day.findAll("p")[0]
+            # print("after", day.text)
             link = tmp_link.find('a').get('href')
-            dataset.append([number.find('p').text, day.text, link])       
+            print(type(day.text))
+            ad_day = self.time_util.execute(day.text.strip())
+            dataset.append([number.find('p').text, ad_day, link])       
         return dataset
 
 class PathOperater:

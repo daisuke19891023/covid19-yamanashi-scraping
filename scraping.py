@@ -2,10 +2,12 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import os
+from common_util import TimeUtil
 
 class Scraper:
     def __init__(self, base):
         self.base = base
+        self.time_util = TimeUtil()
     def getTargetUrl(self, base_url, target_url):
         r = requests.get(self.base + base_url)
         r.encoding = r.apparent_encoding
@@ -21,6 +23,21 @@ class Scraper:
         with open(path_name, 'wb') as fd:
             for chunk in r.iter_content(chunk_size=2000):
                 fd.write(chunk)
+    def parseTable(self, soup_data):
+        table = soup_data.findAll('table')[0]
+        numbers = table.findAll("th")[1:]
+        rows = table.findAll("tr")[1:]
+        dataset = []
+        for number, row in zip(numbers, rows):
+            _, tmp = row.findAll("td")
+            #dayにpタグが付いているパターンがある
+            correct_date = tmp.findAll('a')[-1]
+            day = correct_date.getText()
+            ad_day = self.time_util.execute(day.strip())
+            link = correct_date.get('href')
+
+            dataset.append([number.find('p').text, ad_day, link])       
+        return dataset
 
 class PathOperater:
     def __init__(self):
@@ -36,22 +53,7 @@ class PathOperater:
     def setDownlaodFileName(self, path, fileName):
         return os.path.join(self.current, path, fileName)
 
-base = "https://www.pref.yamanashi.jp"
-index_html= "/koucho/coronavirus/info_coronavirus.html"
-scr = Scraper(base)
-# 発生状況等の取得
-url2 = scr.getTargetUrl(index_html, 'info_coronavirus_prevention.html')
-print(url2)
-soup2 = scr.getContent(url2)
-elems = soup2.findAll(href=re.compile('pdf'),text=re.compile('報道資料'))
-print(len(elems))
-#pdf格納folderの作成
-pathOp = PathOperater()
-pathOp.createPath('pdf')
-for e in elems:
-    print('{}:{}'.format(e.getText(),e.get('href')))
-    # 格納先のファイル名を作成
-    file_name = pathOp.setDownlaodFileName('pdf', pathOp.getFileName(e.get('href')))
-    scr.downloadPdf(e.get('href'), file_name)
 
 
+if __name__ == '__main__':
+    print("main")

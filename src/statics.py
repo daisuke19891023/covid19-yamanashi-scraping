@@ -1,4 +1,4 @@
-from scraping import Scraper
+from src.scraping import Scraper
 
 def getStaticsDataDict(scr, table, comments):
     contacts_table = table

@@ -3,6 +3,7 @@ import os
 import re
 import shutil
 
+
 class TimeUtil:
     def __init__(self):
         self.WAREKI_FORMAT = {
@@ -10,19 +11,20 @@ class TimeUtil:
             '平成': datetime.datetime(1989, 1, 8)
         }
         self.wareki_pattern = r'令和|平成'
-        self.tz_jst_name = datetime.timezone(datetime.timedelta(hours=9), name='JST')
-        self.start_date = datetime.datetime(2020, 3, 1 ,tzinfo=self.tz_jst_name)
+        self.tz_jst_name = datetime.timezone(
+            datetime.timedelta(hours=9), name='JST')
+        self.start_date = datetime.datetime(
+            2020, 3, 1, tzinfo=self.tz_jst_name)
         self.default_year = 2020
 
-
     def getWareki(self, dt_wareki):
-        m =  re.match(self.wareki_pattern, dt_wareki)
+        m = re.match(self.wareki_pattern, dt_wareki)
         if m != None:
             wareki = m.group()
             other = dt_wareki[m.end():]
             return wareki, other
         else:
-            return None, None 
+            return None, None
 
     def getYMD(self, dt_other):
         result = []
@@ -31,6 +33,7 @@ class TimeUtil:
             ans, tmp, *_ = tmp.split(a)
             result.append(int(ans))
         return result
+
     def getMDin2020(self, dt):
         result = []
         tmp = dt
@@ -38,21 +41,25 @@ class TimeUtil:
             ans, tmp, *_ = tmp.split(a)
             result.append(int(ans))
         return result
+
     def parseDateSpan(self, date_char):
-        return list(map(lambda x: x.strip().strip('～'),date_char.split('\n')))
+        return list(map(lambda x: x.strip().strip('～'), date_char.split('\n')))
 
     def convertToAD(self, wareki, y, m, d):
         base = self.WAREKI_FORMAT[wareki]
         base_y = base.year
-        result = datetime.datetime(base_y + y -1, m, d,tzinfo=self.tz_jst_name)
+        result = datetime.datetime(
+            base_y + y - 1, m, d, tzinfo=self.tz_jst_name)
         return result.isoformat()
-    def convertToAD2020(self, m, d,string_format=True):
+
+    def convertToAD2020(self, m, d, string_format=True):
         base_y = self.default_year
-        result = datetime.datetime(base_y, m, d,tzinfo=self.tz_jst_name)
+        result = datetime.datetime(base_y, m, d, tzinfo=self.tz_jst_name)
         if string_format:
             return result.isoformat()
         else:
             return result
+
     def executeConvert(self, datetime_string):
         wareki, other = self.getWareki(datetime_string)
         if wareki != None:
@@ -60,7 +67,8 @@ class TimeUtil:
             return self.convertToAD(wareki, y, m, d)
         else:
             return ""
-    def createDatetimeDict(self, end, start=None,need_day=False):
+
+    def createDatetimeDict(self, end, start=None, need_day=False):
         end_date = end.astimezone(self.tz_jst_name)
         if start != None:
             start_date = start.astimezone(self.tz_jst_name)
@@ -68,59 +76,68 @@ class TimeUtil:
             start_date = self.start_date
         time_span = (end_date - start_date).days + 1
         if need_day:
-            return [{"日付":(start_date + datetime.timedelta(days=i)).isoformat(),"day":(start_date + datetime.timedelta(days=i)).day, "小計":0} for i in range(time_span)]        
+            return [{"日付": (start_date + datetime.timedelta(days=i)).isoformat(), "day": (start_date + datetime.timedelta(days=i)).day, "小計": 0} for i in range(time_span)]
         else:
-            return [{"日付":(start_date + datetime.timedelta(days=i)).isoformat(), "小計":0} for i in range(time_span)]
+            return [{"日付": (start_date + datetime.timedelta(days=i)).isoformat(), "小計": 0} for i in range(time_span)]
+
     def getDatetimeDictFromString(self, date_char):
-        #文字列を分割
+        # 文字列を分割
         tmp = self.parseDateSpan(date_char)
         tmp_list = []
-        #西暦に変換
+        # 西暦に変換
         for t in tmp:
-            m, d = self.getMDin2020(t)        
+            m, d = self.getMDin2020(t)
             tmp_list.append(self.convertToAD2020(m, d, string_format=False))
-        #日ごとの連想配列を作成（小計のデフォルト値は0）
+        # 日ごとの連想配列を作成（小計のデフォルト値は0）
         start = tmp_list[0]
         end = tmp_list[1]
-        return self.createDatetimeDict(end, start,need_day=True)
-       
+        return self.createDatetimeDict(end, start, need_day=True)
+
 
 class StringUtil:
     def __init__(self):
         super().__init__()
         self.exclude_char = r'県外'
+
     def exclude_outside(self, full_with_str):
         if re.search(self.exclude_char, full_with_str):
             return False
         else:
             return True
+
     def is_duplicate_data(self, number_char):
         check = re.search(r',', number_char)
         if check == None:
             return False, number_char
         else:
-            tmp = re.sub(r'県|内|例|目','',number_char)
-            return True, list(map(lambda x:'県内{}例目'.format(x), tmp.split(',')))
+            tmp = re.sub(r'県|内|例|目', '', number_char)
+            return True, list(map(lambda x: '県内{}例目'.format(x), tmp.split(',')))
+
 
 class PathOperater:
     def __init__(self):
-        self.current= os.getcwd()
+        self.current = os.getcwd()
+
     def createPath(self, path_name):
         target_path = os.path.join(self.current, path_name)
         if(os.path.exists(target_path)):
             return 0
         else:
             os.makedirs(target_path)
+
     def getFileName(self, url_file_path):
         return os.path.basename(url_file_path)
+
     def setDownlaodFileName(self, path, fileName):
         return os.path.join(self.current, path, fileName)
+
     def removePath(self, path_name):
         target_path = os.path.join(self.current, path_name)
         if(os.path.exists(target_path)):
             shutil.rmtree(target_path)
         else:
             return 0
+
 
 if __name__ == '__main__':
     result, char = StringUtil().is_duplicate_data("県内10,11例目")

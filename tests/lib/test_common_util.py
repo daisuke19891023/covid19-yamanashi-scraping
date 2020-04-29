@@ -22,8 +22,8 @@ class TestTimeUtil:
     def test_getWareki_None(self):
         tmu = TimeUtil()
         wareki, other = tmu.getWareki('大正1年1月31日')
-        assert wareki == None
-        assert other == None
+        assert wareki is None
+        assert other is None
 
     def test_getYMD(self):
         tmu = TimeUtil()

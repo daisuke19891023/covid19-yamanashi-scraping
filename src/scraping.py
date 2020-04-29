@@ -67,7 +67,7 @@ class Scraper:
             # span
             # td属性からテキストを取得
             span, sum_number_tmp, individuals_tmp = item.findAll('td')
-            sum_number = sum_number_tmp.findAll('p')[0]
+            # sum_number = sum_number_tmp.findAll('p')[0]
             individuals = list(individuals_tmp.findAll('p')
                                [0].text.strip().split('、'))
 

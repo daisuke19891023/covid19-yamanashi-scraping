@@ -13,7 +13,7 @@ if __name__ == '__main__':
     tables = scr.findAllTable(soup)
     # jsonファイル格納用のオブジェクト作成
     result_json = {}
-    update_datetime = datetime.datetime.now().strftime('%Y\/%m\/%d %H:%M')
+    update_datetime = datetime.datetime.now().strftime('%Y/%m/%d %H:%M')
     result_json['lastUpdate'] = update_datetime
 
     # 患者情報の取得
@@ -23,7 +23,7 @@ if __name__ == '__main__':
     result_json['patients'] = patients
     result_json['patients_summary'] = patients_summary_data
 
-    #contents, querents, inspections_summary情報の取得
+    # ontents, querents, inspections_summary情報の取得
     contacts = getStaticsDataDict(scr, tables[3], "新型コロナウイルス感染症専用相談ダイヤル相談件数")
     contacts.update({'date': update_datetime})
     result_json['contacts'] = contacts

@@ -1,5 +1,4 @@
 *.pdf
-*.txt
 *.pyproj
 data.json
 __pycache__/

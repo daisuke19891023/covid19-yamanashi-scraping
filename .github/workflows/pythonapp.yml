@@ -6,8 +6,6 @@ name: Python application
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 jobs:
   build:
@@ -37,6 +35,5 @@ jobs:
     #    pytest
     - name: Run Scrping
       run: |
-        mkdir text
-        python main.py
+        python 
         cat data.json

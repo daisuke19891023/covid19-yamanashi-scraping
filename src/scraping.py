@@ -1,8 +1,10 @@
 import requests
-from bs4 import BeautifulSoup
 import re
 import os
-from common_util import TimeUtil
+
+from bs4 import BeautifulSoup
+
+from src.lib.common_util import TimeUtil
 
 class Scraper:
     def __init__(self, base):
@@ -74,24 +76,6 @@ class Scraper:
             res_dict.extend(target_list)
         #一次変数の'day'を消して返却
         return list(map(lambda x:{'日付':x['日付'], '小計':x['小計']}, res_dict))
-
-
-
-class PathOperater:
-    def __init__(self):
-        self.current= os.getcwd()
-    def createPath(self, path_name):
-        target_path = os.path.join(self.current, path_name)
-        if(os.path.exists(target_path)):
-            return 0
-        else:
-            os.makedirs(target_path)
-    def getFileName(self, url_file_path):
-        return os.path.basename(url_file_path)
-    def setDownlaodFileName(self, path, fileName):
-        return os.path.join(self.current, path, fileName)
-
-
 
 if __name__ == '__main__':
     print("main")

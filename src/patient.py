@@ -1,11 +1,11 @@
-from scraping import Scraper, PathOperater
-from pdf2text import Pdf2Text
-from parserPdf import ParserPdf
+from src.scraping import Scraper
+from src.lib.pdf2text import Pdf2Text
+from src.lib.parserPdf import ParserPdf
+from src.lib.common_util import StringUtil, TimeUtil, PathOperater
 import glob
 import json
 import os
 import re
-from common_util import StringUtil, TimeUtil
 from itertools import groupby
 import datetime
 def getPatientDict(index_html, scr):
@@ -18,6 +18,7 @@ def getPatientDict(index_html, scr):
     #pdf格納folderの作成
     pathOp = PathOperater()
     pathOp.createPath('pdf')
+
     #県外事例は除外
     inside_checker = StringUtil()
     patient_data_tmp= []
@@ -35,17 +36,18 @@ def getPatientDict(index_html, scr):
             #重複している場合
             if isDuplicated:
                 for n in number_char:
-                    print('No:{} リリース日:{} 判明日:{} Link:{}'.format(n, data[1].strip(), data[2].strip(), output_path))
+                    #print('No:{} リリース日:{} 判明日:{} Link:{}'.format(n, data[1].strip(), data[2].strip(), output_path))
                     patient_data_tmp.append({"No":n, "リリース日":data[1].strip(), "link": output_path})
                     patients_summary_tmp.append(data[2].strip())
 
             #単一の場合
             else:
-                print('No:{} リリース日:{} 判明日:{} Link:{}'.format(number_char, data[1].strip(), data[2].strip(), output_path))
+                #print('No:{} リリース日:{} 判明日:{} Link:{}'.format(number_char, data[1].strip(), data[2].strip(), output_path))
                 patient_data_tmp.append({"No":number_char, "リリース日":data[1].strip(), "link": output_path})
                 patients_summary_tmp.append(data[2].strip())
  
     #convertの実行
+    pathOp.createPath('text')
     convert_txt = Pdf2Text()
     convert_txt.executeConvert()
 
@@ -71,8 +73,8 @@ def getPatientDict(index_html, scr):
     for k, g in groupby(patients_summary_tmp):
         patients_summary = list(map(lambda x: {"日付":x["日付"], "小計":len(list(g)) if x['日付'] == k else x['小計']}, patients_summary))
 
-    print(patients_summary)
     patients_summary_data['data'] = sorted(patients_summary,key=lambda x:x['日付'])
+
 
     return patients, patients_summary_data
 

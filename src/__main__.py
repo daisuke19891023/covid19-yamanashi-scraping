@@ -1,7 +1,7 @@
 import json
-from scraping import Scraper
-from statics import getStaticsDataDict
-from patient import getPatientDict
+from src.scraping import Scraper
+from src.statics import getStaticsDataDict
+from src.patient import getPatientDict
 import datetime
 if __name__ == '__main__':
     base = "https://www.pref.yamanashi.jp"

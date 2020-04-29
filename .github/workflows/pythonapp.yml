@@ -35,5 +35,5 @@ jobs:
     #    pytest
     - name: Run Scrping
       run: |
-        python 
+        python -m src
         cat data.json

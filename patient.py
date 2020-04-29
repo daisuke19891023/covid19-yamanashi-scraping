@@ -56,6 +56,7 @@ def getPatientDict(index_html, scr):
     for tmp in patient_data_tmp:
         result = parser.text2dict(tmp['No'], tmp['link'])
         result.update(tmp)
+        result.update({'退院':None})
         del result['link']
         json_list.append(result)
     patients = {}

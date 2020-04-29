@@ -7,12 +7,13 @@ from io import StringIO
 import sys
 import glob
 import os
-
+import re
+import mojimoji
 # PDF read
 class Pdf2Text:
     def __init__(self):
         super().__init__()
-    def execute(self):
+    def executeConvert(self):
         for path in glob.glob('./pdf/*'):
             input_path = path
             output_file = os.path.splitext(os.path.basename(input_path))[0]
@@ -28,63 +29,16 @@ class Pdf2Text:
                     interpreter = PDFPageInterpreter(rsrcmgr, device)
                     for page in PDFPage.get_pages(input):
                         interpreter.process_page(page)
+                    
                     text += output.getvalue()
                 device.close()
             output.close()
-            # Change of special character
-            table = str.maketrans({
-                "’": "'",
-                '。': '.',
-                '・': '',
-                '“': '"',
-                '”': '"',
-                'α': '\\alpha',
-                'β': '\\beta',
-                'γ': '\\gamma',
-                'δ': '\\delta',
-                'ϵ': '\\epsilon',
-                'ζ': '\\zeta',
-                'η': '\\eta',
-                'θ': '\\theta',
-                'ι': '\\iota',
-                'κ': '\\kappa',
-                'λ': '\\lambda',
-                'μ': '\\mu',
-                'ν': '\\nu',
-                'ξ': '\\xi',
-                'π': '\\pi',
-                'ρ': '\\rho',
-                'σ': '\\sigma',
-                'τ': '\\tau',
-                'υ': '\\upsilon',
-                'ϕ': '\\phi',
-                'χ': '\\chi',
-                'ψ': '\\psi',
-                'ω': '\\omega',
-                'ε': '\\varepsilon',
-                'ϑ': '\\vartheta',
-                'ϱ': '\\varrho',
-                'ς': '\\varsigma',
-                'φ': '\\varphi',
-                'Γ': '\\Gamma',
-                'Δ': '\\Delta',
-                'Θ': '\\Theta',
-                'Λ': '\\Lambda',
-                'Ξ': '\\Xi',
-                'Π': '\\Pi',
-                'Σ': '\\Sigma',
-                'Υ': '\\Upsilon',
-                'Φ': '\\Phi',
-                'Ψ': '\\Psi',
-                'Ω': '\\Omega',
-                '∈': '\\in'
-            })
-            text = text.strip()
-            text = text.translate(table)
-
+            #半角空白が発生するため、trimする
+            text = re.sub(r' |　', '', text.strip())
+            text = mojimoji.zen_to_han(text)
             # output text
             with open(output_path, "wb") as f:
                 f.write(text.encode('utf-8', "ignore"))
 if __name__ == '__main__':
     convert_txt = Pdf2Text()
-    convert_txt.execute()
+    convert_txt.executeConvert()

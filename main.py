@@ -22,7 +22,7 @@ if __name__ == '__main__':
     patients, patients_summary_data = getPatientDict(index_html, scr)
     patients.update({'date':update_datetime}) 
     patients_summary_data.update({'date':update_datetime})
-    result_json['patient'] = patients 
+    result_json['patients'] = patients 
     result_json['patients_summary'] = patients_summary_data
 
     #contents, querents, inspections_summary情報の取得

@@ -19,7 +19,7 @@ class TimeUtil:
 
     def getWareki(self, dt_wareki):
         m = re.match(self.wareki_pattern, dt_wareki)
-        if m != None:
+        if m is not None:
             wareki = m.group()
             other = dt_wareki[m.end():]
             return wareki, other
@@ -62,7 +62,7 @@ class TimeUtil:
 
     def executeConvert(self, datetime_string):
         wareki, other = self.getWareki(datetime_string)
-        if wareki != None:
+        if wareki is not None:
             y, m, d = self.getYMD(other)
             return self.convertToAD(wareki, y, m, d)
         else:
@@ -70,7 +70,7 @@ class TimeUtil:
 
     def createDatetimeDict(self, end, start=None, need_day=False):
         end_date = end.astimezone(self.tz_jst_name)
-        if start != None:
+        if start is not None:
             start_date = start.astimezone(self.tz_jst_name)
         else:
             start_date = self.start_date
@@ -107,7 +107,7 @@ class StringUtil:
 
     def is_duplicate_data(self, number_char):
         check = re.search(r',', number_char)
-        if check == None:
+        if check is None:
             return False, number_char
         else:
             tmp = re.sub(r'県|内|例|目', '', number_char)

@@ -37,5 +37,6 @@ jobs:
     #    pytest
     - name: Run Scrping
       run: |
+        mkdir text
         python main.py
         cat data.json

@@ -76,14 +76,16 @@ class TestTimeUtil:
     def test_createDatetimeDict_start_No_needDay(self):
         tmu = TimeUtil()
         result = tmu.createDatetimeDict(datetime.datetime(
-            2020, 3, 2), start=datetime.datetime(2020, 3, 1, 0, 0, 0, 0))
+            2020, 3, 2), start=datetime.datetime(2020, 3, 1, 0, 0, 0, 0, tzinfo=datetime.timezone(
+                datetime.timedelta(hours=9), name='JST')))
         assert result == [{"日付": "2020-03-01T00:00:00+09:00",
                            "小計": 0}, {"日付": "2020-03-02T00:00:00+09:00", "小計": 0}]
 
     def test_createDatetimeDict_start_needDay(self):
         tmu = TimeUtil()
         result = tmu.createDatetimeDict(datetime.datetime(
-            2020, 3, 2), start=datetime.datetime(2020, 3, 1, 0, 0, 0, 0), need_day=True)
+            2020, 3, 2), start=datetime.datetime(2020, 3, 1, 0, 0, 0, 0, tzinfo=datetime.timezone(
+                datetime.timedelta(hours=9), name='JST')), need_day=True)
         assert result == [{"日付": "2020-03-01T00:00:00+09:00", "day": 1,
                            "小計": 0}, {"日付": "2020-03-02T00:00:00+09:00", "小計": 0, "day": 2}]
 

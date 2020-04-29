@@ -64,7 +64,7 @@ class TimeUtil:
             start_date = start.astimezone(self.tz_jst_name)
         else:
             start_date = self.start_date
-        time_span = (end_date - start_date).days
+        time_span = (end_date - start_date).days + 1
         if need_day:
             return [{"日付":(start_date + datetime.timedelta(days=i)).isoformat(),"day":(start_date + datetime.timedelta(days=i)).day, "小計":0} for i in range(time_span)]        
         else:

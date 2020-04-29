@@ -4,6 +4,7 @@ from parserPdf import ParserPdf
 import glob
 import json
 import os
+import re
 from common_util import StringUtil, TimeUtil
 from itertools import groupby
 import datetime
@@ -50,7 +51,7 @@ def getPatientDict(index_html, scr):
 
     #テキストからjsonの作成
     parser = ParserPdf()
-    json_list = []
+    patient_list = []
 
     #patientの作成
     for tmp in patient_data_tmp:
@@ -58,9 +59,9 @@ def getPatientDict(index_html, scr):
         result.update(tmp)
         result.update({'退院':None})
         del result['link']
-        json_list.append(result)
+        patient_list.append(result)
     patients = {}
-    patients['data'] = json_list
+    patients['data'] = sorted(patient_list, key=lambda x:int(re.sub(r'県|内|例|目','',x['No'])))
     patients['__comments'] = "陽性患者の属性"
 
     #patients_summaryの作成

@@ -38,7 +38,7 @@ class TestPathOperater:
         result = exists_dir_object[0].createPath(exists_dir_object[1])
         assert result == 1
 
-    @pytest.mark.parametrize("test_input, expected", [('/huga/example1.json', 'example1.json'),  ('c:\test\example2.txt', 'example2.txt')])
+    @pytest.mark.parametrize("test_input, expected", [('/huga/example1.json', 'example1.json'),  ('/example2.txt', 'example2.txt')])
     def test_getFileName(self, file_name_object, test_input, expected):
         result = file_name_object.getFileName(test_input)
         assert result == expected
@@ -46,4 +46,3 @@ class TestPathOperater:
     def test_setDownlaodFileName(self, file_name_object):
         result = file_name_object.setDownlaodFileName('huga', 'example1.json')
         assert result == os.path.join(os.getcwd(), 'huga', 'example1.json')
-

@@ -3,7 +3,7 @@ import re
 
 from bs4 import BeautifulSoup
 
-from src.lib.common_util import TimeUtil
+from src.lib.time_util import TimeUtil
 
 
 class Scraper:

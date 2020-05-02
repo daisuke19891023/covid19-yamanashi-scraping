@@ -10,6 +10,8 @@ on:
   pull_request:
     branches:
       - develop
+  schedule:
+    - cron: "0 * * * *"
 
 jobs:
   build:
@@ -40,3 +42,18 @@ jobs:
         run: |
           python -m src
           cat data.json
+      - name: Commit files
+        run: |
+          git config --local user.email secrets.EMAIL
+          git config --local user.name "Scraing Bot"
+          git status | grep modified && git add data.json && git commit -v -m "[Bot] GitHub Actions - auto run" \
+            && curl -X POST \
+              -H "Authorization: Bearer ${{ secrets.ACCESS_TOKEN }}" \
+              -H "Accept: application/vnd.github.everest-preview+json" \
+              -H "Content-Type: application/json" \
+              https://api.github.com/repos/daisuke19891023/covid19/dispatches --data '{"event_type": "build_application"}' \
+            || true
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -5,9 +5,11 @@ import datetime
 
 from itertools import groupby
 
-from src.lib.pdf2text import Pdf2Text
-from src.lib.parserPdf import ParserPdf
-from src.lib.common_util import StringUtil, TimeUtil, PathOperater
+from src.lib.pdf_parser import PdfParser
+from src.lib.text_parser import TextParser
+from src.lib.string_util import StringUtil
+from src.lib.path_operater import PathOperater
+from src.lib.time_util import TimeUtil
 
 
 def getPatientDict(index_html, scr):
@@ -53,11 +55,11 @@ def getPatientDict(index_html, scr):
 
     # convertの実行
     pathOp.createPath('text')
-    convert_txt = Pdf2Text()
+    convert_txt = PdfParser()
     convert_txt.executeConvert()
 
     # テキストからjsonの作成
-    parser = ParserPdf()
+    parser = TextParser()
     patient_list = []
 
     # patientの作成

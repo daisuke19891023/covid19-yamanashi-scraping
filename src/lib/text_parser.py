@@ -2,7 +2,7 @@ import re
 import glob
 
 
-class ParserPdf:
+class TextParser:
     def __init__(self):
         self.pattern = r'年代|性別|退院|居住地'
 
@@ -17,14 +17,14 @@ class ParserPdf:
                 # numberで返される'n例目'以降の文字列を読み込む
                 if read_flg:
                     check = re.search(book_mark, text)
-                    print("book_mark:{} check:{} text:{}".format(
-                        book_mark, check, text))
+                    # print("book_mark:{} check:{} text:{}".format(
+                    #     book_mark, check, text))
                     if check == None:
                         continue
                     else:
                         # テキスト情報として'n-1,n例目'と記載されている部分を除外する
                         tmp_check = text[check.start()-1]
-                        print(tmp_check)
+                        # print(tmp_check)
                         if re.match(r',|、|､', tmp_check) == None:
                             read_flg = False
                 if text != '':
@@ -43,10 +43,3 @@ class ParserPdf:
                             data_dict[key] = value
                         continue
         return data_dict
-
-
-if __name__ == '__main__':
-    parser = ParserPdf()
-    # print(parser.text2dict('./ttt.txt'))
-    for path in glob.glob('./text/*'):
-        print(parser.text2dict('県内1例目', path))

@@ -11,7 +11,7 @@ import mojimoji
 # PDF read
 
 
-class Pdf2Text:
+class PdfParser:
     def __init__(self):
         super().__init__()
 
@@ -45,5 +45,5 @@ class Pdf2Text:
 
 
 if __name__ == '__main__':
-    convert_txt = Pdf2Text()
+    convert_txt = PdfParser()
     convert_txt.executeConvert()

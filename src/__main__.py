@@ -13,7 +13,9 @@ if __name__ == '__main__':
     tables = scr.findAllTable(soup)
     # jsonファイル格納用のオブジェクト作成
     result_json = {}
-    update_datetime = datetime.datetime.now().strftime('%Y/%m/%d %H:%M')
+    jst = datetime.timezone(
+        datetime.timedelta(hours=9), name='JST')
+    update_datetime = datetime.datetime.now(jst).strftime('%Y/%m/%d %H:%M')
     result_json['lastUpdate'] = update_datetime
 
     # 患者情報の取得

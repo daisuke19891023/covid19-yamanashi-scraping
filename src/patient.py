@@ -12,7 +12,7 @@ from src.lib.path_operater import PathOperater
 from src.lib.time_util import TimeUtil
 
 
-def getPatientDict(index_html, scr):
+def getPatientDict(index_html, scr, update_datetime):
     # 発生状況等の取得
     url = scr.getTargetUrl(index_html, 'info_coronavirus_prevention.html')
     soup = scr.getContent(url)
@@ -70,13 +70,15 @@ def getPatientDict(index_html, scr):
         del result['link']
         patient_list.append(result)
     patients = {}
+    patients['__comments'] = "陽性患者の属性"
+    patients['date'] = update_datetime
     patients['data'] = sorted(patient_list, key=lambda x: int(
         re.sub(r'県|内|例|目', '', x['No'])))
-    patients['__comments'] = "陽性患者の属性"
 
     # patients_summaryの作成
     patients_summary_data = {}
     patients_summary_data['__comments'] = "陽性患者数"
+    patients_summary_data['date'] = update_datetime
     patients_summary = TimeUtil().createDatetimeDict(datetime.datetime.now())
     for k, g in groupby(patients_summary_tmp):
         patients_summary = list(map(lambda x: {"日付": x["日付"], "小計": len(

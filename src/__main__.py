@@ -16,26 +16,24 @@ if __name__ == '__main__':
     jst = datetime.timezone(
         datetime.timedelta(hours=9), name='JST')
     update_datetime = datetime.datetime.now(jst).strftime('%Y/%m/%d %H:%M')
-    result_json['lastUpdate'] = update_datetime
 
     # 患者情報の取得
-    patients, patients_summary_data = getPatientDict(index_html, scr)
-    patients.update({'date': update_datetime})
-    patients_summary_data.update({'date': update_datetime})
+    patients, patients_summary_data = getPatientDict(
+        index_html, scr, update_datetime)
     result_json['patients'] = patients
     result_json['patients_summary'] = patients_summary_data
 
     # ontents, querents, inspections_summary情報の取得
-    contacts = getStaticsDataDict(scr, tables[3], "新型コロナウイルス感染症専用相談ダイヤル相談件数")
-    contacts.update({'date': update_datetime})
+    contacts = getStaticsDataDict(
+        scr, tables[3], "新型コロナウイルス感染症専用相談ダイヤル相談件数", update_datetime)
     result_json['contacts'] = contacts
-    querents = getStaticsDataDict(scr, tables[2], "帰国者・接触者相談センター相談件数")
-    querents.update({'date': update_datetime})
+    querents = getStaticsDataDict(
+        scr, tables[2], "帰国者・接触者相談センター相談件数", update_datetime)
     result_json['querents'] = querents
-    inspections_summary = getStaticsDataDict(scr, tables[1], "県内の疑似症例の検査状況")
-    inspections_summary.update({'date': update_datetime})
+    inspections_summary = getStaticsDataDict(
+        scr, tables[1], "県内の疑似症例の検査状況", update_datetime)
     result_json['inspections_summary'] = inspections_summary
-
+    result_json['lastUpdate'] = update_datetime
     # update data.json
     du = DataUpdater('data.json')
     du.update_data(result_json)

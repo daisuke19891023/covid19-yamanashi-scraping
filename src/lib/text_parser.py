@@ -29,7 +29,7 @@ class TextParser:
                             read_flg = False
                 if text != '':
                     # 事前に':'を削除する
-                    text = re.sub(r':', '', text)
+                    text = re.sub(r':|︓', '', text)
                     m = re.search(self.pattern, text)
                     # print(text)
                     if m != None:

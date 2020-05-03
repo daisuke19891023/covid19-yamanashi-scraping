@@ -2,7 +2,7 @@ import json
 from src.scraping import Scraper
 from src.statics import getStaticsDataDict
 from src.patient import getPatientDict
-from src.create_data import create_data
+from src.data_updater import DataUpdater
 import datetime
 if __name__ == '__main__':
     base = "https://www.pref.yamanashi.jp"
@@ -37,4 +37,6 @@ if __name__ == '__main__':
     inspections_summary.update({'date': update_datetime})
     result_json['inspections_summary'] = inspections_summary
 
-    create_data(result_json)
+    # update data.json
+    du = DataUpdater('data.json')
+    du.update_data(result_json)

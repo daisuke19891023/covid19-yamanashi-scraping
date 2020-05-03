@@ -1,4 +1,3 @@
-import json
 from src.scraping import Scraper
 from src.statics import getStaticsDataDict
 from src.patient import getPatientDict

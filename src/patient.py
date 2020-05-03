@@ -41,14 +41,14 @@ def getPatientDict(index_html, scr):
             # 重複している場合
             if isDuplicated:
                 for n in number_char:
-                    #print('No:{} リリース日:{} 判明日:{} Link:{}'.format(n, data[1].strip(), data[2].strip(), output_path))
+                    # print('No:{} リリース日:{} 判明日:{} Link:{}'.format(n, data[1].strip(), data[2].strip(), output_path))
                     patient_data_tmp.append(
                         {"No": n, "リリース日": data[1].strip(), "link": output_path})
                     patients_summary_tmp.append(data[2].strip())
 
             # 単一の場合
             else:
-                #print('No:{} リリース日:{} 判明日:{} Link:{}'.format(number_char, data[1].strip(), data[2].strip(), output_path))
+                # print('No:{} リリース日:{} 判明日:{} Link:{}'.format(number_char, data[1].strip(), data[2].strip(), output_path))
                 patient_data_tmp.append(
                     {"No": number_char, "リリース日": data[1].strip(), "link": output_path})
                 patients_summary_tmp.append(data[2].strip())

@@ -6,7 +6,7 @@ env:
   POST_URL: https://api.github.com/repos/daisuke19891023/covid19/dispatches
 on:
   schedule:
-    - cron: "0 * * * *"
+    - cron: "*/15 * * * *"
 
 jobs:
   build:
@@ -24,14 +24,14 @@ jobs:
           pip install flake8 pytest pytest-cov "pytest-remotedata>=0.3.1"
           ls
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Run Scrping
+      - name: Run Scraping
         run: |
           python -m src
       - name: Commit files
         run: |
           git config --local user.email secrets.EMAIL
           git config --local user.name "Scraping Bot"
-          git status | grep modified && git add data.json && git commit -v -m "[Bot] GitHub Actions - auto run" \
+          git status | grep modified && git add data.json && git commit -v -m "[Bot] GitHub Actions - auto run. Update at $(date +'%Y-%m-%d')" \
             && curl -X POST \
               -H "Authorization: Bearer ${{ secrets.ACCESS_TOKEN }}" \
               -H "Accept: application/vnd.github.everest-preview+json" \

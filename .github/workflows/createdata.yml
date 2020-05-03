@@ -3,7 +3,7 @@
 
 name: Create data.json
 env:
-  POST_URL: "https://api.github.com/repos/daisuke19891023/covid19/dispatches"
+  POST_URL: ${{ 'https://api.github.com/repos/daisuke19891023/covid19/dispatches' }}
 on:
   schedule:
     - cron: "*/10 * * * *"

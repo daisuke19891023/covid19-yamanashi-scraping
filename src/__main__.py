@@ -2,6 +2,7 @@ import json
 from src.scraping import Scraper
 from src.statics import getStaticsDataDict
 from src.patient import getPatientDict
+from src.create_data import create_data
 import datetime
 if __name__ == '__main__':
     base = "https://www.pref.yamanashi.jp"
@@ -35,6 +36,5 @@ if __name__ == '__main__':
     inspections_summary = getStaticsDataDict(scr, tables[1], "県内の疑似症例の検査状況")
     inspections_summary.update({'date': update_datetime})
     result_json['inspections_summary'] = inspections_summary
-    text = json.dumps(result_json, indent=4, ensure_ascii=False)
-    with open('./data.json', "wb") as f:
-        f.write(text.encode('utf-8', "ignore"))
+
+    create_data(result_json)

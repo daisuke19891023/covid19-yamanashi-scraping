@@ -10,6 +10,7 @@ from src.lib.text_parser import TextParser
 from src.lib.string_util import StringUtil
 from src.lib.path_operater import PathOperater
 from src.lib.time_util import TimeUtil
+from src.lib.json_checker import JsonChecker
 
 
 def getPatientDict(index_html, scr, update_datetime):
@@ -84,7 +85,10 @@ def getPatientDict(index_html, scr, update_datetime):
         patients_summary = list(map(lambda x: {"日付": x["日付"], "小計": len(
             list(g)) if x['日付'] == k else x['小計']}, patients_summary))
 
-    patients_summary_data['data'] = sorted(
-        patients_summary, key=lambda x: x['日付'])
+    # 小計が0とならない最新の日付までのリストにする
+    patients_summary = sorted(patients_summary, key=lambda x: x['日付'])
+    jc = JsonChecker()
+    patients_summary = jc.exclude_zero_max_date(patients_summary)
+    patients_summary_data['data'] = patients_summary
 
     return patients, patients_summary_data

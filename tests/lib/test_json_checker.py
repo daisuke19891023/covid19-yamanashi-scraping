@@ -66,3 +66,23 @@ class TestJsonChecker:
         result = jc_object.check_nonzero_max(
             input_json1, input_json2, 'contacts')
         assert result == expected
+
+    def test_exclude_zero_max_date(self, jc_object):
+        target_dir = os.path.join(
+            os.getcwd(), 'tests', 'data', 'check_nonzero_max_after_same.json')
+        input_json = jc_object.read_json(target_dir)
+        result = jc_object.exclude_zero_max_date(
+            input_json['contacts']['data'])
+        assert result == [
+            {
+                "日付": "2020-01-29T00:00:00+09:00",
+                "小計": 11
+            },
+            {
+                "日付": "2020-01-30T00:00:00+09:00",
+                "小計": 61
+            },
+            {
+                "日付": "2020-01-31T00:00:00+09:00",
+                "小計": 47
+            }]

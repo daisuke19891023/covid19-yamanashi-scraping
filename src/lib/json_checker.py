@@ -35,3 +35,8 @@ class JsonChecker:
         after_max = max(after_nonzero, key=lambda x: x['日付'])
 
         return before_max['日付'] == after_max['日付'] and before_max['小計'] == after_max['小計']
+
+    def exclude_zero_max_date(self, obj_list):
+        nonzero_list = list(filter(lambda x: x['小計'] != 0, obj_list))
+        nonzero_max = max(nonzero_list, key=lambda x: x['日付'])
+        return obj_list[:obj_list.index(nonzero_max)+1]

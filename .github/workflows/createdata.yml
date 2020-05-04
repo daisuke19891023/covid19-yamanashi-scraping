@@ -34,7 +34,8 @@ jobs:
               -H "Authorization: Bearer ${{ secrets.ACCESS_TOKEN }}" \
               -H "Accept: application/vnd.github.everest-preview+json" \
               -H "Content-Type: application/json" \
-              https://api.github.com/repos/daisuke19891023/covid19/dispatches --data '{"event_type": "create_pr"}' \
+              # https://api.github.com/repos/daisuke19891023/covid19/dispatches --data '{"event_type": "create_pr"}' \
+              https://api.github.com/repos/covid19-yamanashi/covid19/dispatches --data '{"event_type": "create_pr"}' \
             || true
       - name: Push changes
         uses: ad-m/github-push-action@master

@@ -53,11 +53,14 @@ class Scraper:
         return soup_data.findAll('table')
 
     def parseContactsTable(self, table):
-        def convertDaysCountKV(items):
+        def convertDaysCountKV(texts):
             result = []
-            for item in items:
+            for text in texts:
+                # 5月1日など月が記載されている箇所があるため、月以前を削除する
+                if re.search(r'月', text) is not None:
+                    _, text = re.split(r'月', text)
                 # 誤字で日が件と表示されている箇所があるため、日と件の両方で分割
-                key, count, *_ = re.split(r'日|件', item)
+                key, count, *_ = re.split(r'日|件', text)
                 result.append({'day': int(key), 'count': int(count)})
             return result
 

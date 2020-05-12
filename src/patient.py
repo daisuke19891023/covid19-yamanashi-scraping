@@ -73,9 +73,15 @@ def getPatientDict(index_html, scr, update_datetime):
     patients = {}
     patients['__comments'] = "陽性患者の属性"
     patients['date'] = update_datetime
-    patients['data'] = sorted(patient_list, key=lambda x: int(
+    # Noに数字が入らない場合の処理（例："再陽性"）
+    nan_patient_list = list(filter(lambda x: re.search(
+        r'\d', x['No']) is None, patient_list))
+    number_patient_list = list(filter(lambda x: re.search(
+        r'\d', x['No']) is not None, patient_list))
+    insert_patient_list = sorted(number_patient_list, key=lambda x: int(
         re.sub(r'県|内|例|目', '', x['No'])))
-
+    insert_patient_list.extend(nan_patient_list)
+    patients['data'] = insert_patient_list
     # patients_summaryの作成
     patients_summary_data = {}
     patients_summary_data['__comments'] = "陽性患者数"

@@ -16,17 +16,17 @@ class TestTimeUtil:
         '2年10月31日'
     ),
         ('平成30年1月31日', '平成', '30年1月31日'), ('大正1年1月31日', None, None)])
-    def test_getWareki(self, tmu_object, test_input, expected_wareki, expected_other):
-        wareki, other = tmu_object.getWareki(test_input)
+    def test_get_wareki(self, tmu_object, test_input, expected_wareki, expected_other):
+        wareki, other = tmu_object.get_wareki(test_input)
         assert wareki == expected_wareki
         assert other == expected_other
 
-    def test_getYMD(self, tmu_object):
-        result = tmu_object.getYMD('2年3月9日')
+    def test_get_ymd_int_each(self, tmu_object):
+        result = tmu_object.get_ymd_int_each('2年3月9日')
         assert result == [2, 3, 9]
 
     def test_getMDin2020(self, tmu_object):
-        result = tmu_object.getMDin2020('3月1日')
+        result = tmu_object.get_ymd_int_each('3月1日', need_year=False)
         assert result == [3, 1]
 
     def test_parseDateSpan(self, tmu_object):

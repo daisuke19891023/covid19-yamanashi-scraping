@@ -11,3 +11,4 @@ urllib3==1.25.9
 virtualenv==16.7.6
 pdfminer.six==20200402
 mojimoji==0.0.10
+mypy==0.770

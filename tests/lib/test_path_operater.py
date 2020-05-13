@@ -1,11 +1,11 @@
 import pytest
-from src.lib.path_operater import PathOperater
+from src.lib.path_operator import PathOperator
 import os
 
 
 @pytest.fixture(scope="module", autouse=True)
 def create_dir_object():
-    po = PathOperater()
+    po = PathOperator()
     tmp_folder_name = 'hoge'
     yield po, tmp_folder_name
     if(os.path.exists(tmp_folder_name)):
@@ -14,7 +14,7 @@ def create_dir_object():
 
 @pytest.fixture(scope="module", autouse=True)
 def exists_dir_object():
-    po = PathOperater()
+    po = PathOperator()
     tmp_folder_name = 'huga'
     os.makedirs(tmp_folder_name)
     yield po, tmp_folder_name
@@ -24,25 +24,30 @@ def exists_dir_object():
 
 @pytest.fixture(scope="module", autouse=True)
 def file_name_object():
-    po = PathOperater()
+    po = PathOperator()
     yield po
 
 
 class TestPathOperater:
-    def test_createPath(self, create_dir_object):
-        result = create_dir_object[0].createPath(create_dir_object[1])
-        assert result == 0
+    def test_create_path(self, create_dir_object, capsys):
+        create_dir_object[0].create_path(create_dir_object[1])
+        captured = capsys.readouterr()
+        assert captured.out == 'create path name: {}\n'.format(
+            create_dir_object[1])
         assert os.path.exists(create_dir_object[1]) == True
 
-    def test_createPath_exists(self, exists_dir_object):
-        result = exists_dir_object[0].createPath(exists_dir_object[1])
-        assert result == 1
+    def test_create_path_exists(self, exists_dir_object, capsys):
+        exists_dir_object[0].create_path(exists_dir_object[1])
+        captured = capsys.readouterr()
+        assert captured.out == 'path name: {} already exists\n'.format(
+            exists_dir_object[1])
 
     @pytest.mark.parametrize("test_input, expected", [('/huga/example1.json', 'example1.json'),  ('/example2.txt', 'example2.txt')])
-    def test_getFileName(self, file_name_object, test_input, expected):
-        result = file_name_object.getFileName(test_input)
+    def test_get_file_name(self, file_name_object, test_input, expected):
+        result = file_name_object.get_file_name(test_input)
         assert result == expected
 
-    def test_setDownlaodFileName(self, file_name_object):
-        result = file_name_object.setDownlaodFileName('huga', 'example1.json')
+    def test_set_downlaod_file_name(self, file_name_object):
+        result = file_name_object.set_downlaod_file_name(
+            'huga', 'example1.json')
         assert result == os.path.join(os.getcwd(), 'huga', 'example1.json')

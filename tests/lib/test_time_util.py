@@ -25,35 +25,35 @@ class TestTimeUtil:
         result = tmu_object.get_ymd_int_each('2年3月9日')
         assert result == [2, 3, 9]
 
-    def test_getMDin2020(self, tmu_object):
+    def test_get_ymd_int_each_2020(self, tmu_object):
         result = tmu_object.get_ymd_int_each('3月1日', need_year=False)
         assert result == [3, 1]
 
-    def test_parseDateSpan(self, tmu_object):
+    def test_parse_date_span(self, tmu_object):
         target_char = "test1～ \ntest2"
-        result = tmu_object.parseDateSpan(target_char)
+        result = tmu_object.parse_date_span(target_char)
         assert result == ["test1", "test2"]
 
-    def test_convertToAD(self, tmu_object):
-        iso_format = tmu_object.convertToAD('令和', 2, 4, 29)
+    def test_get_ad_dt_fmt(self, tmu_object):
+        iso_format = tmu_object.get_ad_dt_fmt('令和', 2, 4, 29)
         assert iso_format == "2020-04-29T00:00:00+09:00"
 
-    def test_convertToAD2020_ISO(self, tmu_object):
-        iso_format = tmu_object.convertToAD2020(4, 3)
+    def test_get_ad_date_iso_fmt(self, tmu_object):
+        iso_format = tmu_object.get_ad_date_iso_fmt(4, 3)
         assert iso_format == "2020-04-03T00:00:00+09:00"
 
-    def test_convertToAD2020_Not_ISO(self, tmu_object):
-        datetime_format = tmu_object.convertToAD2020(4, 3, string_format=False)
+    def test_get_ad_default_year_dt_fmt(self, tmu_object):
+        datetime_format = tmu_object.get_ad_default_year_dt_fmt(4, 3)
         assert datetime_format == datetime.datetime(
             2020, 4, 3, 0, 0, tzinfo=datetime.timezone(datetime.timedelta(0, 32400), 'JST'))
 
-    def test_executeConvert(self, tmu_object):
-        result = tmu_object.executeConvert('令和2年10月23日')
+    def test_convert_wareki_to_ad(self, tmu_object):
+        result = tmu_object.convert_wareki_to_ad('令和2年10月23日')
         assert result == "2020-10-23T00:00:00+09:00"
 
-    def test_executeConvert_None(self, tmu_object):
-        result = tmu_object.executeConvert('大正2年10月23日')
-        assert result == ''
+    def test_convert_wareki_to_ad_error(self, tmu_object):
+        with pytest.raises(ValueError):
+            tmu_object.convert_wareki_to_ad('大正2年10月23日')
 
     @pytest.mark.parametrize(
         "pattern, end, start, need_day, expected", [
@@ -72,15 +72,15 @@ class TestTimeUtil:
                                            "小計": 0}, {"日付": "2020-03-02T00:00:00+09:00", "小計": 0, "day": 2}])
         ]
     )
-    def test_createDatetimeDict(self, tmu_object, pattern, end, start, need_day, expected):
+    def test_create_dt_dict(self, tmu_object, pattern, end, start, need_day, expected):
         print(pattern)
-        result = tmu_object.createDatetimeDict(
+        result = tmu_object.create_dt_dict(
             end, start=start, need_day=need_day)
         assert result == expected
 
-    def test_getDatetimeDictFromString(self, tmu_object):
+    def test_get_dt_dict_from_text(self, tmu_object):
         target_char = "3月1日～    \n3月2日"
-        result = tmu_object.getDatetimeDictFromString(target_char)
+        result = tmu_object.get_dt_dict_from_text(target_char)
         assert result == [{"日付": "2020-03-01T00:00:00+09:00", "day": 1,
                            "小計": 0}, {"日付": "2020-03-02T00:00:00+09:00", "小計": 0, "day": 2}]
 

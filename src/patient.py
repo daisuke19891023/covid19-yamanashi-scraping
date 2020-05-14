@@ -18,8 +18,10 @@ def getPatientDict(index_html, scr, update_datetime):
     url = scr.getTargetUrl(index_html, 'info_coronavirus_prevention.html')
     soup = scr.getContent(url)
     # テーブル情報を取得する
-    dataset = scr.parseSingleTable(soup)
-
+    try:
+        dataset = scr.parseSingleTable(soup)
+    except ValueError as e:
+        raise e
     # pdf格納folderの作成
     path_op = PathOperator()
     path_op.create_path('pdf')
@@ -87,7 +89,7 @@ def getPatientDict(index_html, scr, update_datetime):
     patients_summary_data = {}
     patients_summary_data['__comments'] = "陽性患者数"
     patients_summary_data['date'] = update_datetime
-    patients_summary = TimeUtil().createDatetimeDict(datetime.datetime.now())
+    patients_summary = TimeUtil().create_dt_dict(datetime.datetime.now())
     for k, g in groupby(patients_summary_tmp):
         patients_summary = list(map(lambda x: {"日付": x["日付"], "小計": len(
             list(g)) if x['日付'] == k else x['小計']}, patients_summary))

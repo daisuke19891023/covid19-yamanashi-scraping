@@ -5,11 +5,11 @@ class TextParser:
     def __init__(self):
         self.pattern = r'年代|性別|退院|居住地'
 
-    def text2dict(self, number, path):
-        book_mark = re.sub(r'県内', '', number)
+    def text2dict(self, target_number: str, text_file_path: str) -> dict:
+        book_mark = re.sub(r'県内', '', target_number)
         data_dict = {}
 
-        with open(path, 'rt', encoding='utf-8') as input_file:
+        with open(text_file_path, 'rt', encoding='utf-8') as input_file:
             read_flg = True
             texts = [s.strip() for s in input_file.readlines()]
             for text in texts:

@@ -1,5 +1,5 @@
 from src.scraping import Scraper
-from src.statics import getStaticsDataDict
+from src.statics import Statics
 from src.patient import getPatientDict
 from src.data_updater import DataUpdater
 import datetime
@@ -23,15 +23,16 @@ if __name__ == '__main__':
     result_json['patients'] = patients
     result_json['patients_summary'] = patients_summary_data
 
-    # ontents, querents, inspections_summary情報の取得
-    contacts = getStaticsDataDict(
-        scr, tables[3], "新型コロナウイルス感染症専用相談ダイヤル相談件数", update_datetime)
+    # contents, querents, inspections_summary情報の取得
+    stats = Statics(base)
+    contacts = stats.getStaticsDataDict(
+        tables[3], "新型コロナウイルス感染症専用相談ダイヤル相談件数", update_datetime)
     result_json['contacts'] = contacts
-    querents = getStaticsDataDict(
-        scr, tables[2], "帰国者・接触者相談センター相談件数", update_datetime)
+    querents = stats.getStaticsDataDict(
+        tables[2], "帰国者・接触者相談センター相談件数", update_datetime)
     result_json['querents'] = querents
-    inspections_summary = getStaticsDataDict(
-        scr, tables[1], "県内の疑似症例の検査状況", update_datetime)
+    inspections_summary = stats.getStaticsDataDict(
+        tables[1], "県内の疑似症例の検査状況", update_datetime)
     result_json['inspections_summary'] = inspections_summary
     result_json['lastUpdate'] = update_datetime
     # update data.json

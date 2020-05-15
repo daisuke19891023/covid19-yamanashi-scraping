@@ -6,3 +6,4 @@ text/
 pdf/
 .coverage
 .pytest_cache/
+.mypy_cache/

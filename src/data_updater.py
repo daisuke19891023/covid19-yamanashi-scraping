@@ -7,7 +7,7 @@ class DataUpdater:
     def __init__(self, target_file):
         self.target_file = target_file
 
-    def update_data(self, new_obj):
+    def update_data(self, new_obj: dict) -> None:
         if(os.path.exists(self.target_file)):
             if(self.check_data(new_obj)):
                 print('create new data')
@@ -17,14 +17,13 @@ class DataUpdater:
         else:
             print('create new data')
             self.create_data(new_obj)
-        return 0
 
-    def create_data(self, new_obj):
+    def create_data(self, new_obj: dict) -> None:
         text = json.dumps(new_obj, indent=4, ensure_ascii=False)
         with open(self.target_file, "wb") as f:
             f.write(text.encode('utf-8', "ignore"))
 
-    def check_data(self, new_obj):
+    def check_data(self, new_obj: dict) -> bool:
         jc = JsonChecker()
         old_obj = jc.read_json(self.target_file)
         if not jc.check_list_count(old_obj, new_obj, 'patients'):

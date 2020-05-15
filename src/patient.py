@@ -8,7 +8,7 @@ from itertools import groupby
 from src.lib.pdf_parser import PdfParser
 from src.lib.text_parser import TextParser
 from src.lib.string_util import StringUtil
-from src.lib.path_operater import PathOperater
+from src.lib.path_operator import PathOperator
 from src.lib.time_util import TimeUtil
 from src.lib.json_checker import JsonChecker
 
@@ -18,11 +18,13 @@ def getPatientDict(index_html, scr, update_datetime):
     url = scr.getTargetUrl(index_html, 'info_coronavirus_prevention.html')
     soup = scr.getContent(url)
     # テーブル情報を取得する
-    dataset = scr.parseSingleTable(soup)
-
+    try:
+        dataset = scr.parseSingleTable(soup)
+    except ValueError as e:
+        raise e
     # pdf格納folderの作成
-    pathOp = PathOperater()
-    pathOp.createPath('pdf')
+    path_op = PathOperator()
+    path_op.create_path('pdf')
 
     # 県外事例は除外
     inside_checker = StringUtil()
@@ -32,15 +34,16 @@ def getPatientDict(index_html, scr, update_datetime):
         if inside_checker.exclude_outside(data[0]):
 
             # 格納先のファイル名を作成
-            file_name = pathOp.setDownlaodFileName(
-                'pdf', pathOp.getFileName(data[3]))
+            file_name = path_op.set_downlaod_file_name(
+                'pdf', path_op.get_file_name(data[3]))
             scr.downloadPdf(data[3], file_name)
             output_file = os.path.splitext(os.path.basename(file_name))[0]
             output_path = os.path.join('./text', output_file + '.txt')
-            isDuplicated, number_char = StringUtil().is_duplicate_data(data[0])
+            is_duplicated, number_char = StringUtil(
+            ).is_duplicate_data(data[0])
 
             # 重複している場合
-            if isDuplicated:
+            if is_duplicated:
                 for n in number_char:
                     # print('No:{} リリース日:{} 判明日:{} Link:{}'.format(n, data[1].strip(), data[2].strip(), output_path))
                     patient_data_tmp.append(
@@ -55,7 +58,7 @@ def getPatientDict(index_html, scr, update_datetime):
                 patients_summary_tmp.append(data[2].strip())
 
     # convertの実行
-    pathOp.createPath('text')
+    path_op.create_path('text')
     convert_txt = PdfParser()
     convert_txt.executeConvert()
 
@@ -86,7 +89,7 @@ def getPatientDict(index_html, scr, update_datetime):
     patients_summary_data = {}
     patients_summary_data['__comments'] = "陽性患者数"
     patients_summary_data['date'] = update_datetime
-    patients_summary = TimeUtil().createDatetimeDict(datetime.datetime.now())
+    patients_summary = TimeUtil().create_dt_dict(datetime.datetime.now())
     for k, g in groupby(patients_summary_tmp):
         patients_summary = list(map(lambda x: {"日付": x["日付"], "小計": len(
             list(g)) if x['日付'] == k else x['小計']}, patients_summary))

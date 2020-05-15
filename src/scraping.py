@@ -11,19 +11,19 @@ class Scraper:
         self.base = base
         self.time_util = TimeUtil()
 
-    def getTargetUrl(self, base_url, target_url):
+    def getTargetUrl(self, base_url: str, target_url: str):
         r = requests.get(self.base + base_url)
         r.encoding = r.apparent_encoding
         soup = BeautifulSoup(r.text, 'html.parser')
         elems = soup.find(href=re.compile(target_url))
         return elems.get('href')
 
-    def getContent(self, url):
+    def getContent(self, url: str):
         r = requests.get(self.base + url)
         r.encoding = r.apparent_encoding
         return BeautifulSoup(r.text, 'html.parser')
 
-    def downloadPdf(self, pdf_url, path_name):
+    def downloadPdf(self, pdf_url: str, path_name: str) -> None:
         r = requests.get(self.base + pdf_url, stream=True)
         with open(path_name, 'wb') as fd:
             for chunk in r.iter_content(chunk_size=2000):
@@ -39,9 +39,13 @@ class Scraper:
             # dayにpタグが付いているパターンがある
             correct_date = tmp.findAll('a')[-1]
             day_release = correct_date.getText()
-            ad_day_release = self.time_util.executeConvert(day_release.strip())
-            ad_day_proved = self.time_util.executeConvert(
-                day_proved.text.strip())
+            try:
+                ad_day_release = self.time_util.convert_wareki_to_ad(
+                    day_release.strip())
+                ad_day_proved = self.time_util.convert_wareki_to_ad(
+                    day_proved.text.strip())
+            except ValueError as e:
+                raise e
 
             link = correct_date.get('href')
 
@@ -75,7 +79,7 @@ class Scraper:
                                [0].text.strip().split('、'))
 
             # spanからreturnするdictonaryのlistを取得する
-            target_list = TimeUtil().getDatetimeDictFromString(span.text.strip())
+            target_list = TimeUtil().get_dt_dict_from_text(span.text.strip())
 
             # 日ごとの件数をkvで取得
             days_count_dict = convertDaysCountKV(individuals)

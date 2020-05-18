@@ -56,6 +56,12 @@ class Scraper:
     def findAllTable(self, soup_data):
         return soup_data.findAll('table')
 
+    def get_text_rm_p_tag(self, soup):
+        if len(soup.findAll('p')) != 0:
+            return soup.findAll('p')[0].text.strip()
+        else:
+            return soup.text.strip()
+
     def parseContactsTable(self, table):
         def convertDaysCountKV(texts):
             result = []
@@ -73,13 +79,12 @@ class Scraper:
         for item in items:
             # span
             # td属性からテキストを取得
-            span, sum_number_tmp, individuals_tmp = item.findAll('td')
-            # sum_number = sum_number_tmp.findAll('p')[0]
-            individuals = list(individuals_tmp.findAll('p')
-                               [0].text.strip().split('、'))
+            span, sum_number_tmp, individuals_tmp = list(
+                map(self.get_text_rm_p_tag, item.findAll('td')))
+            individuals = list(individuals_tmp.split('、'))
 
             # spanからreturnするdictonaryのlistを取得する
-            target_list = TimeUtil().get_dt_dict_from_text(span.text.strip())
+            target_list = TimeUtil().get_dt_dict_from_text(span)
 
             # 日ごとの件数をkvで取得
             days_count_dict = convertDaysCountKV(individuals)

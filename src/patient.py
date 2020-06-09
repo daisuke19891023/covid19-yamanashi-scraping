@@ -13,9 +13,9 @@ from src.lib.time_util import TimeUtil
 from src.lib.json_checker import JsonChecker
 
 
-def getPatientDict(index_html, scr, update_datetime):
+def getPatientDict(source_url, target_url, scr, update_datetime):
     # 発生状況等の取得
-    url = scr.getTargetUrl(index_html, 'info_coronavirus_prevention.html')
+    url = scr.getTargetUrl(source_url, target_url)
     soup = scr.getContent(url)
     # テーブル情報を取得する
     try:

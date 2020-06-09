@@ -8,8 +8,8 @@ if __name__ == '__main__':
     index_html = "/koucho/coronavirus/info_coronavirus.html"
     scr = Scraper(base)
     # 発生状況等の取得
-    url = scr.getTargetUrl(index_html, 'info_coronavirus_data.html')
-    soup = scr.getContent(url)
+    tables_url = scr.getTargetUrl(index_html, 'info_coronavirus_data.html')
+    soup = scr.getContent(tables_url)
     tables = scr.findAllTable(soup)
     # jsonファイル格納用のオブジェクト作成
     result_json = {}
@@ -18,8 +18,12 @@ if __name__ == '__main__':
     update_datetime = datetime.datetime.now(jst).strftime('%Y/%m/%d %H:%M')
 
     # 患者情報の取得
+    patient_url = scr.getTargetUrl(
+        index_html, 'info_coronavirus_prevention.html')
+    print(patient_url)
+    past_url = 'info_coronavirus_past.html'
     patients, patients_summary_data = getPatientDict(
-        index_html, scr, update_datetime)
+        patient_url, past_url, scr, update_datetime)
     result_json['patients'] = patients
     result_json['patients_summary'] = patients_summary_data
 

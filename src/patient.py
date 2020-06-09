@@ -111,3 +111,36 @@ class Patient:
         jc = JsonChecker()
         patients_summary = jc.exclude_zero_max_date(patients_summary)
         self.patients_summary_data['data'] = patients_summary
+
+    def create_new_patient_dict(self, patient_soup, scr):
+
+        # 対象の階層のデータだけ抽出する
+        data = scr.find_h4(patient_soup)
+        print(data)
+        patients = []
+        patient = {}
+        patient["No"] = data.text
+        pattern = re.compile(r'発生判明日：')
+        for index, sibling in enumerate(data.next_siblings):
+            if index % 2 != 0:  # 改行コードはスキップする
+                # h2属性の場合、新たなpatient dictを
+                if sibling.name == 'h4':
+                    patients.append(patient)
+                    patient = {}
+                    patient["No"] = sibling.text
+                    continue
+
+                # 判明日
+                if re.match(pattern, sibling.text):
+                    patient["判明日"] = re.sub(pattern, '', sibling.text)
+                    continue
+
+                # print(repr(sibling))
+                # print(type(repr(sibling)))
+                # print(type(sibling))
+            if sibling.name == 'h2':
+                patients.append(patient)
+                break
+        print(patients)
+
+        # print(sibling.find('p'))

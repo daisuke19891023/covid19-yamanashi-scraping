@@ -21,6 +21,10 @@ if __name__ == '__main__':
     pat = Patient(update_datetime)
     patient_url = scr.getTargetUrl(
         index_html, 'info_coronavirus_prevention.html')
+    patient_soup = scr.getContent(patient_url)
+
+    # 患者情報(新)の取得
+    pat.create_new_patient_dict(patient_soup, scr)
     past_url = 'info_coronavirus_past.html'
     patients, patients_summary_data = pat.get_patient_dict(
         patient_url, past_url, scr)

@@ -56,6 +56,12 @@ class Scraper:
     def findAllTable(self, soup_data):
         return soup_data.findAll('table')
 
+    def find_p_and_h4(self, soup_data):
+        return soup_data.findAll(['p', 'h4'])
+
+    def find_h4(self, soup_data):
+        return soup_data.find('h4')
+
     def get_text_rm_p_tag(self, soup):
         if len(soup.findAll('p')) != 0:
             return soup.findAll('p')[0].text.strip()

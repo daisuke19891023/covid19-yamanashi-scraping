@@ -58,15 +58,15 @@ class Patient:
                 # 重複している場合
                 if is_duplicated:
                     for n in number_char:
-                        # print('No:{} リリース日:{} 判明日:{} Link:{}'.format(n, data[1].strip(), data[2].strip(), output_path))
+                        # print('No:{} 発生判明日:{} Link:{}'.format(n, data[1].strip(), data[2].strip(), output_path))
                         patient_data_tmp.append(
-                            {"No": n, "リリース日": data[1].strip(), "判明日": data[2].strip(), "link": output_path})
+                            {"No": n, "発生判明日": data[2].strip(), "link": output_path})
 
                 # 単一の場合
                 else:
-                    # print('No:{} リリース日:{} 判明日:{} Link:{}'.format(number_char, data[1].strip(), data[2].strip(), output_path))
+                    # print('No:{} 発生判明日:{} Link:{}'.format(number_char, data[1].strip(), data[2].strip(), output_path))
                     patient_data_tmp.append(
-                        {"No": number_char, "リリース日": data[1].strip(), "判明日": data[2].strip(), "link": output_path})
+                        {"No": number_char,  "発生判明日": data[2].strip(), "link": output_path})
 
         # convertの実行
         path_op.create_path('text')
@@ -101,8 +101,8 @@ class Patient:
     def create_patients_summary_dict(self, patient_list):
         # patients_summaryの作成
         patients_summary = TimeUtil().create_dt_dict(datetime.datetime.now())
-        # patient_listから"判明日"のみのリストを作成
-        patients_summary_tmp = list(map(lambda x: x["判明日"], patient_list))
+        # patient_listから"発生判明日"のみのリストを作成
+        patients_summary_tmp = list(map(lambda x: x["発生判明日"], patient_list))
 
         for k, g in groupby(patients_summary_tmp):
             patients_summary = list(map(lambda x: {"日付": x["日付"], "小計": len(
@@ -123,17 +123,16 @@ class Patient:
         patient = {}
         patient["No"] = StringUtil(
         ).exclude_info_number(data.text)
-        pattern = r'年代|性別|判明日|居住地'
+        pattern = r'年代|性別|発生判明日|居住地'
 
         for index, sibling in enumerate(data.next_siblings):
             if index % 2 != 0:  # 改行コードはスキップする
                 # h2属性の場合、新たなpatient dictを
                 if sibling.name == 'h4':
                     patient["退院"] = None
-                    if patient["判明日"] is not None:
-                        patient["判明日"] = TimeUtil().convert_wareki_to_ad(
-                            patient["判明日"])
-                        patient["リリース日"] = patient["判明日"]
+                    if patient["発生判明日"] is not None:
+                        patient["発生判明日"] = TimeUtil().convert_wareki_to_ad(
+                            patient["発生判明日"])
                     patients.append(patient)
                     patient = {}
                     patient["No"] = StringUtil(
@@ -156,10 +155,9 @@ class Patient:
             # h2タグが表示された時点で別と患者情報の表示は終了する
             if sibling.name == 'h2':
                 patient["退院"] = None
-                if patient["判明日"] is not None:
-                    patient["判明日"] = TimeUtil().convert_wareki_to_ad(
-                        patient["判明日"])
-                    patient["リリース日"] = patient["判明日"]
+                if patient["発生判明日"] is not None:
+                    patient["発生判明日"] = TimeUtil().convert_wareki_to_ad(
+                        patient["発生判明日"])
                 patients.append(patient)
                 break
         print(patients)

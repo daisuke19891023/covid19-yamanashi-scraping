@@ -61,7 +61,9 @@ class TimeUtil:
         else:
             raise ValueError("不正な和歴です")
 
-    def create_dt_dict(self, end: datetime.datetime, start: datetime.datetime = None, need_day: bool = False) -> List[dict]:
+    def create_dt_dict(self, end: datetime.datetime,
+                       start: datetime.datetime = None,
+                       need_day: bool = False) -> List[dict]:
         end_date = end.astimezone(self.tz_jst_name)
         if start is not None:
             start_date = start.astimezone(self.tz_jst_name)

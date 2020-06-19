@@ -11,6 +11,7 @@ from src.lib.string_util import StringUtil
 from src.lib.path_operator import PathOperator
 from src.lib.time_util import TimeUtil
 from src.lib.json_checker import JsonChecker
+import bs4
 
 
 class Patient:
@@ -114,6 +115,13 @@ class Patient:
         patients_summary = jc.exclude_zero_max_date(patients_summary)
         self.patients_summary_data['data'] = patients_summary
 
+    def sort_patients_dict(self, patients_before: dict) -> dict:
+        patients_after = {}
+        keys = ("年代", "性別", "居住地", "No", "発生判明日", "退院")
+        for key in keys:
+            patients_after[key] = patients_before[key]
+        return patients_after
+
     def create_new_patient_dict(self, patient_soup, scr):
 
         # 対象の階層のデータだけ抽出する
@@ -125,41 +133,62 @@ class Patient:
         ).exclude_info_number(data.text)
         pattern = r'年代|性別|発生判明日|居住地'
 
+        i = 10
         for index, sibling in enumerate(data.next_siblings):
-            if index % 2 != 0:  # 改行コードはスキップする
-                # h2属性の場合、新たなpatient dictを
-                if sibling.name == 'h4':
-                    patient["退院"] = None
-                    if patient["発生判明日"] is not None:
-                        patient["発生判明日"] = TimeUtil().convert_wareki_to_ad(
-                            patient["発生判明日"])
-                    patients.append(patient)
-                    patient = {}
-                    patient["No"] = StringUtil(
-                    ).exclude_info_number(sibling.text)
-                    continue
+            if sibling != "\n":
+                print(type(sibling))
+                if type(sibling) is bs4.element.Tag:
+                    print(sibling.text)
+                else:
+                    target = str(sibling)
+                    target = re.sub("\n", "", target)
+                    print(target)
 
-                text = re.sub(r':|︓|：', '', sibling.text)
-                m = re.search(pattern, text)
-                # print(text)
-                if m is not None:
-                    key = m.group()
-                    value = text[m.end():]
-                    # 年代の表記ゆれの統一（歳代→代）
-                    if key == '年代':
-                        value = re.sub(r'歳', '', value)
-                    # keyが存在しない場合のみ代入する
-                    if key not in patient:
-                        patient[key] = value
-                    continue
+                print("---------------------")
+            i -= 1
+            if i == 0:
+                break
+        for index, sibling in enumerate(data.next_siblings):
+            # if index % 2 != 0:  # 改行コードはスキップする
+            if hasattr(sibling, "text"):
+                target = sibling.text
+            else:
+                target = sibling
+
+            # h2属性の場合、新たなpatient dictを
+            if sibling.name == 'h4':
+                patient["退院"] = None
+                if patient["発生判明日"] is not None:
+                    patient["発生判明日"] = TimeUtil().convert_wareki_to_ad(
+                        patient["発生判明日"])
+                patients.append(self.sort_patients_dict(patient))
+                patient = {}
+                patient["No"] = StringUtil(
+                ).exclude_info_number(target)
+                continue
+
+            text = re.sub(r':|︓|：', '', target)
+            m = re.search(pattern, text)
+            # print(text)
+            if m is not None:
+                key = m.group()
+                value = text[m.end():]
+                # 年代の表記ゆれの統一（歳代→代）
+                if key == '年代':
+                    value = re.sub(r'歳', '', value)
+                # keyが存在しない場合のみ代入する
+                if key not in patient:
+                    patient[key] = value
+                continue
             # h2タグが表示された時点で別と患者情報の表示は終了する
             if sibling.name == 'h2':
                 patient["退院"] = None
                 if patient["発生判明日"] is not None:
                     patient["発生判明日"] = TimeUtil().convert_wareki_to_ad(
                         patient["発生判明日"])
-                patients.append(patient)
+                patients.append(self.sort_patients_dict(patient))
                 break
+            print(patient)
         print(patients)
         self.patient_list = list(filter(lambda x: re.search(
             r'\d', x['No']) is not None, patients))

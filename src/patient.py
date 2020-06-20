@@ -71,15 +71,12 @@ class Patient:
 
         # convertの実行
         path_op.create_path('text')
-        convert_txt = PdfParser()
-        convert_txt.executeConvert()
-
-        # テキストからjsonの作成
-        parser = TextParser()
+        PdfParser.execute_pdf2text()
 
         # patientの作成
         for tmp in patient_data_tmp:
-            result = parser.text2dict(tmp['No'], tmp['link'])
+            # テキストからjsonの作成
+            result = TextParser.text2dict(tmp['No'], tmp['link'])
             result.update(tmp)
             result.update({'退院': None})
             del result['link']
@@ -111,8 +108,7 @@ class Patient:
 
         # 小計が0とならない最新の日付までのリストにする
         patients_summary = sorted(patients_summary, key=lambda x: x['日付'])
-        jc = JsonChecker()
-        patients_summary = jc.exclude_zero_max_date(patients_summary)
+        patients_summary = JsonChecker.exclude_zero_max_date(patients_summary)
         self.patients_summary_data['data'] = patients_summary
 
     def sort_patients_dict(self, patients_before: dict) -> dict:
@@ -126,28 +122,10 @@ class Patient:
 
         # 対象の階層のデータだけ抽出する
         data = scr.find_h4(patient_soup)
-        print(data)
         patients = []
         patient = {}
-        patient["No"] = StringUtil(
-        ).exclude_info_number(data.text)
-        pattern = r'年代|性別|発生判明日|居住地'
+        patient["No"] = StringUtil.exclude_info_number(data.text)
 
-        i = 10
-        for index, sibling in enumerate(data.next_siblings):
-            if sibling != "\n":
-                print(type(sibling))
-                if type(sibling) is bs4.element.Tag:
-                    print(sibling.text)
-                else:
-                    target = str(sibling)
-                    target = re.sub("\n", "", target)
-                    print(target)
-
-                print("---------------------")
-            i -= 1
-            if i == 0:
-                break
         for index, sibling in enumerate(data.next_siblings):
             # if index % 2 != 0:  # 改行コードはスキップする
             if hasattr(sibling, "text"):
@@ -155,7 +133,7 @@ class Patient:
             else:
                 target = sibling
 
-            # h2属性の場合、新たなpatient dictを
+            # h4属性の場合、新たなpatient dictを作成する
             if sibling.name == 'h4':
                 patient["退院"] = None
                 if patient["発生判明日"] is not None:
@@ -163,23 +141,14 @@ class Patient:
                         patient["発生判明日"])
                 patients.append(self.sort_patients_dict(patient))
                 patient = {}
-                patient["No"] = StringUtil(
-                ).exclude_info_number(target)
+                patient["No"] = StringUtil.exclude_info_number(target)
                 continue
 
-            text = re.sub(r':|︓|：', '', target)
-            m = re.search(pattern, text)
-            # print(text)
-            if m is not None:
-                key = m.group()
-                value = text[m.end():]
-                # 年代の表記ゆれの統一（歳代→代）
-                if key == '年代':
-                    value = re.sub(r'歳', '', value)
-                # keyが存在しない場合のみ代入する
-                if key not in patient:
-                    patient[key] = value
-                continue
+            # 年代|性別|発生判明日|居住地の情報をセットする
+            flg, key, value = StringUtil.set_key_value(target)
+            if flg and key not in patient:
+                patient[key] = value
+
             # h2タグが表示された時点で別と患者情報の表示は終了する
             if sibling.name == 'h2':
                 patient["退院"] = None
@@ -188,7 +157,6 @@ class Patient:
                         patient["発生判明日"])
                 patients.append(self.sort_patients_dict(patient))
                 break
-            print(patient)
         print(patients)
         self.patient_list = list(filter(lambda x: re.search(
             r'\d', x['No']) is not None, patients))

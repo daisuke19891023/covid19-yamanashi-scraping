@@ -20,10 +20,34 @@ class StringUtil:
         else:
             tmp = re.sub(r'県|内|例|目', '', number_char)
             return True, list(map(lambda x: '県内{}例目'.format(x), tmp.split(',')))
-
-    def exclude_info_number(self, number_char: str) -> str:
+    @staticmethod
+    def exclude_info_number(number_char: str) -> str:
         m = re.search(r'県内(\d{1,3})例目', number_char)
         if m is not None:
             return m.group()
         else:
             return number_char
+
+    @staticmethod
+    def normalize_age_exxpression(key:str,value:str) -> str:
+        # 年代の表記ゆれの統一（歳代→代）
+        if key == '年代':
+            return re.sub(r'歳', '', value)  
+        else:
+            return value   
+
+    @staticmethod
+    def set_key_value(text:str) -> Tuple[bool,str,str]:
+        pattern = r'年代|性別|発生判明日|居住地'
+        text = re.sub(r':|︓|：', '', text)
+        m = re.search(pattern, text)
+        # print(text)
+        if m is not None:
+            key = m.group()
+            value = text[m.end():]
+            # 年代の表記ゆれの統一（歳代→代）
+            if key == '年代':
+                value = re.sub(r'歳', '', value)  
+            return True, key, value
+        else:
+            return False, "",""

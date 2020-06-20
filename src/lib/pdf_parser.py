@@ -12,10 +12,8 @@ import mojimoji
 
 
 class PdfParser:
-    def __init__(self):
-        super().__init__()
-
-    def executeConvert(self):
+    @staticmethod
+    def execute_pdf2text():
         for path in glob.glob('./pdf/*'):
             input_path = path
             output_file = os.path.splitext(os.path.basename(input_path))[0]

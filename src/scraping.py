@@ -2,7 +2,7 @@ import requests
 import re
 
 from bs4 import BeautifulSoup
-
+from src.lib.string_util import StringUtil
 from src.lib.time_util import TimeUtil
 
 
@@ -53,7 +53,7 @@ class Scraper:
                 [number.find('p').text, ad_day_release, ad_day_proved, link])
         return dataset
 
-    def findAllTable(self, soup_data):
+    def findAllTable(self,soup_data):
         return soup_data.findAll('table')
 
     def find_p_and_h4(self, soup_data):
@@ -67,6 +67,8 @@ class Scraper:
             return soup.findAll('p')[0].text.strip()
         else:
             return soup.text.strip()
+
+
 
     def parseContactsTable(self, table):
         def convertDaysCountKV(texts):

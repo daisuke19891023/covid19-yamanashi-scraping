@@ -1,11 +1,9 @@
 import re
-
+from src.lib.string_util import StringUtil
 
 class TextParser:
-    def __init__(self):
-        self.pattern = r'年代|性別|退院|居住地'
-
-    def text2dict(self, target_number: str, text_file_path: str) -> dict:
+    @staticmethod
+    def text2dict(target_number: str, text_file_path: str) -> dict:
         book_mark = re.sub(r'県内', '', target_number)
         data_dict = {}
 
@@ -27,18 +25,8 @@ class TextParser:
                         if re.match(r',|、|､', tmp_check) is None:
                             read_flg = False
                 if text != '':
-                    # 事前に':'を削除する
-                    text = re.sub(r':|︓', '', text)
-                    m = re.search(self.pattern, text)
-                    # print(text)
-                    if m is not None:
-                        key = m.group()
-                        value = text[m.end():]
-                        # 年代の表記ゆれの統一（歳代→代）
-                        if key == '年代':
-                            value = re.sub(r'歳', '', value)
-                        # keyが存在しない場合のみ代入する
-                        if key not in data_dict:
-                            data_dict[key] = value
-                        continue
+                    # 年代|性別|発生判明日|居住地の情報をセットする
+                    flg, key, value = StringUtil.set_key_value(text)
+                    if flg and key not in data_dict:
+                        data_dict[key] = value
         return data_dict

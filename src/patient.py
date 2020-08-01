@@ -88,7 +88,7 @@ class Patient:
         number_patient_list = list(filter(lambda x: re.search(
             r'\d', x['No']) is not None, self.patient_list))
         insert_patient_list = sorted(number_patient_list, key=lambda x: int(
-            re.sub(r'県|内|例|目', '', x['No'])))
+            re.sub(r'県|内|例|目|第\d報', '', x['No'])))
         insert_patient_list.extend(nan_patient_list)
         self.patients['data'] = insert_patient_list
 

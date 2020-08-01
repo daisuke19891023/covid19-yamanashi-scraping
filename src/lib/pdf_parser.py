@@ -43,5 +43,4 @@ class PdfParser:
 
 
 if __name__ == '__main__':
-    convert_txt = PdfParser()
-    convert_txt.executeConvert()
+    PdfParser.executeConvert()

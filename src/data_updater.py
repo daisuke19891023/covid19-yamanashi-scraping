@@ -24,12 +24,11 @@ class DataUpdater:
             f.write(text.encode('utf-8', "ignore"))
 
     def check_data(self, new_obj: dict) -> bool:
-        jc = JsonChecker()
-        old_obj = jc.read_json(self.target_file)
-        if not jc.check_list_count(old_obj, new_obj, 'patients'):
+        old_obj = JsonChecker.read_json(self.target_file)
+        if not JsonChecker.check_list_count(old_obj, new_obj, 'patients'):
             return True
         target_props = ('contacts', 'querents', 'inspections_summary')
         for prop in target_props:
-            if not jc.check_nonzero_max(old_obj, new_obj, prop):
+            if not JsonChecker.check_nonzero_max(old_obj, new_obj, prop):
                 return True
         return False

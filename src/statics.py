@@ -15,9 +15,8 @@ class Statics:
         dictonary['date'] = update_datetime_iso
 
         # 小計が0とならない最新の日付までのリストにする
-        jc = JsonChecker()
         data = sorted(res_dict, key=lambda x: x['日付'])
-        data = jc.exclude_zero_max_date(data)
+        data = JsonChecker.exclude_zero_max_date(data)
         dictonary['data'] = data
 
         return dictonary

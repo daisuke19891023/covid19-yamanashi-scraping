@@ -59,13 +59,11 @@ class Patient:
                 # 重複している場合
                 if is_duplicated:
                     for n in number_char:
-                        # print('No:{} 発生判明日:{} Link:{}'.format(n, data[1].strip(), data[2].strip(), output_path))
                         patient_data_tmp.append(
                             {"No": n, "発生判明日": data[2].strip(), "link": output_path})
 
                 # 単一の場合
                 else:
-                    # print('No:{} 発生判明日:{} Link:{}'.format(number_char, data[1].strip(), data[2].strip(), output_path))
                     patient_data_tmp.append(
                         {"No": number_char,  "発生判明日": data[2].strip(), "link": output_path})
 
@@ -132,14 +130,17 @@ class Patient:
                 target = sibling.text
             else:
                 target = sibling
-
             # h4属性の場合、新たなpatient dictを作成する
             if sibling.name == 'h4':
-                patient["退院"] = None
-                if patient["発生判明日"] is not None:
-                    patient["発生判明日"] = TimeUtil().convert_wareki_to_ad(
-                        patient["発生判明日"])
-                patients.append(self.sort_patients_dict(patient))
+                # 患者情報でない余計な情報の場合、dictへの格納を行わない
+                if len(patient.keys()) > 1:
+
+                    patient["退院"] = None
+
+                    if patient["発生判明日"] is not None:
+                        patient["発生判明日"] = TimeUtil().convert_wareki_to_ad(
+                            patient["発生判明日"])
+                    patients.append(self.sort_patients_dict(patient))
                 patient = {}
                 patient["No"] = StringUtil.exclude_info_number(target)
                 continue

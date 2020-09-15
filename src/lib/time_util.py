@@ -18,8 +18,7 @@ class TimeUtil:
         self.default_year = 2020
 
     def get_wareki(self, dt_wareki: str) -> Tuple[Optional[str], Optional[str]]:
-        m = re.match(self.wareki_pattern, dt_wareki)
-        if m is not None:
+        if (m:= re.match(self.wareki_pattern, dt_wareki)) is not None:
             wareki = m.group()
             other = dt_wareki[m.end():]
             return wareki, other

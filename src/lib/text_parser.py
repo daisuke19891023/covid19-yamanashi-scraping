@@ -1,6 +1,7 @@
 import re
 from src.lib.string_util import StringUtil
 
+
 class TextParser:
     @staticmethod
     def text2dict(target_number: str, text_file_path: str) -> dict:
@@ -14,8 +15,7 @@ class TextParser:
                 # numberで返される'n例目'以降の文字列を読み込む
                 if read_flg:
                     check = re.search(book_mark, text)
-                    # print("book_mark:{} check:{} text:{}".format(
-                    #     book_mark, check, text))
+                    # print(f"book_mark:{book_mark} check:{check} text:{text}")
                     if check is None:
                         continue
                     else:

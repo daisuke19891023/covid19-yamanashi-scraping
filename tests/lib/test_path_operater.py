@@ -32,15 +32,13 @@ class TestPathOperater:
     def test_create_path(self, create_dir_object, capsys):
         create_dir_object[0].create_path(create_dir_object[1])
         captured = capsys.readouterr()
-        assert captured.out == 'create path name: {}\n'.format(
-            create_dir_object[1])
+        assert captured.out == f'create path name: {create_dir_object[1]}\n'
         assert os.path.exists(create_dir_object[1]) == True
 
     def test_create_path_exists(self, exists_dir_object, capsys):
         exists_dir_object[0].create_path(exists_dir_object[1])
         captured = capsys.readouterr()
-        assert captured.out == 'path name: {} already exists\n'.format(
-            exists_dir_object[1])
+        assert captured.out == f'path name: {exists_dir_object[1]} already exists\n'
 
     @pytest.mark.parametrize("test_input, expected", [('/huga/example1.json', 'example1.json'),  ('/example2.txt', 'example2.txt')])
     def test_get_file_name(self, file_name_object, test_input, expected):

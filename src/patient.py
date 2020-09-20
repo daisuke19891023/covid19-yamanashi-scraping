@@ -123,7 +123,8 @@ class Patient:
         patients = []
         patient = {}
         patient["No"] = StringUtil.exclude_info_number(data.text)
-
+        # 県外事例は除外
+        inside_checker = StringUtil()
         for index, sibling in enumerate(data.next_siblings):
             # if index % 2 != 0:  # 改行コードはスキップする
             if hasattr(sibling, "text"):
@@ -133,7 +134,7 @@ class Patient:
             # h4属性の場合、新たなpatient dictを作成する
             if sibling.name == 'h4':
                 # 患者情報でない余計な情報の場合、dictへの格納を行わない
-                if len(patient.keys()) > 1:
+                if len(patient.keys()) > 1 and inside_checker.exclude_outside(patient["No"]):
 
                     patient["退院"] = None
 

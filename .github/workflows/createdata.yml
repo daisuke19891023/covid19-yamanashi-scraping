@@ -24,7 +24,7 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Run Scraping
         run: |
-          python -m src
+          python from_excel.py
       - name: Commit files
         run: |
           git config --local user.email secrets.EMAIL

@@ -1,17 +1,52 @@
+import os
 import pandas as pd
 import simplejson as json
 import datetime
+import requests
+import re
 
+from bs4 import BeautifulSoup
+base = "https://www.pref.yamanashi.jp"
 dt_now = datetime.datetime.now()
 dt_date = dt_now.replace(hour=0, minute=0, second=0, microsecond=0)
 dt_yesterday = dt_date - datetime.timedelta(days=1)
 dt_update = dt_now.strftime("%Y/%m/%d %H:%M")
 data = {}
-# 陽性者の状況
 
-df_yousei = pd.read_excel(
-    "https://www.pref.yamanashi.jp/koucho/coronavirus/documents/yousei.xlsx"
-)
+
+def get_excel_url(base_url: str, elem_type: str) -> str:
+    r = requests.get(base_url)
+    r.encoding = r.apparent_encoding
+    soup = BeautifulSoup(r.text, 'html.parser')
+    elems = soup.find(href=re.compile(elem_type))
+    return elems.get('href')
+
+
+base_urls = ["/koucho/coronavirus/info_coronavirus_prevention.html",
+             "/koucho/coronavirus/info_coronavirus_data.html",
+             "/koucho/coronavirus/info_coronavirus_data.html"]
+files = ["yousei.xlsx", "soudan.xlsx", "pcr.xlsx"]
+excel_urls = []
+for base_url, elem_type in zip(base_urls, files):
+    base_url = base + base_url
+    target_url = get_excel_url(base_url, elem_type)
+    excel_urls.append(base + target_url)
+
+
+def download_file(url: str, file_name: str, skip_flg=False) -> pd.DataFrame:
+    file_bin = requests.get(url)
+    with open(file_name, "wb") as file:
+        file.write(file_bin.content)
+    if skip_flg:
+        df = pd.read_excel(file_name, index_col=0,
+                           skiprows=1)
+    else:
+        df = pd.read_excel(file_name)
+    return df
+
+
+# 陽性者の状況
+df_yousei = download_file(excel_urls[0], files[0])
 
 df_yousei.columns = df_yousei.columns.map(lambda s: s.replace("\n", ""))
 df_yousei.rename(columns={"№": "No", "居住地（生活圏）": "居住地"}, inplace=True)
@@ -69,12 +104,7 @@ data["patients_summary"] = {
 }
 
 # 電話相談件数
-
-df_soudan = pd.read_excel(
-    "https://www.pref.yamanashi.jp/koucho/coronavirus/documents/soudan.xlsx",
-    index_col=0,
-    skiprows=1,
-)
+df_soudan = download_file(excel_urls[1], files[1], skip_flg=True)
 
 df_soudan = df_soudan[df_soudan.index < dt_date].fillna(0).astype(int)
 
@@ -110,11 +140,7 @@ data["querents"] = {
 
 # 衛生環境研究所におけるPCR検査数
 
-df_pcr = pd.read_excel(
-    "https://www.pref.yamanashi.jp/koucho/coronavirus/documents/pcr.xlsx",
-    index_col=0,
-    skiprows=1,
-)
+df_pcr = download_file(excel_urls[2], files[2], skip_flg=True)
 
 df_pcr.rename(columns={"検査数": "小計"}, inplace=True)
 
@@ -134,3 +160,7 @@ data["lastUpdate"] = dt_update
 
 with open("data.json", "w", encoding="utf-8") as fw:
     json.dump(data, fw, ignore_nan=True, ensure_ascii=False, indent=4)
+
+# ファイル削除
+for file in files:
+    os.remove(file)

@@ -4,6 +4,7 @@ import simplejson as json
 import datetime
 import requests
 import re
+from src.data_updater import DataUpdater
 
 from bs4 import BeautifulSoup
 base = "https://www.pref.yamanashi.jp"
@@ -158,9 +159,9 @@ data["inspections_summary"] = {
 
 data["lastUpdate"] = dt_update
 
-with open("data.json", "w", encoding="utf-8") as fw:
-    json.dump(data, fw, ignore_nan=True, ensure_ascii=False, indent=4)
-
+# update data.json
+du = DataUpdater('data.json')
+du.update_data(data)
 # ファイル削除
 for file in files:
     os.remove(file)

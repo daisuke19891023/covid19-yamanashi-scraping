@@ -5,7 +5,7 @@ from typing import List, Tuple, Union
 class StringUtil:
     def __init__(self):
         super().__init__()
-        self.exclude_char = r'県外|再陽性|空港検疫で確認|東京都'
+        self.exclude_char = r'県外|再陽性|空港検疫で確認|東京都|神奈川'
 
     def exclude_outside(self, full_with_str: str) -> bool:
         if re.search(self.exclude_char, full_with_str):

@@ -21,10 +21,11 @@ xlrd = "==1.2.0"
 pandas = "==1.0.4"
 
 [dev-packages]
+flake8 = "*"
+autopep8 = "*"
 
 [requires]
 python_version = "3.8"
-
 
 [scripts]
 start = "python from_excel.py"

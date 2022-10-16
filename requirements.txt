@@ -7,7 +7,7 @@ pip==19.3.1
 requests==2.23.0
 setuptools==41.2.0
 soupsieve==2.0
-urllib3==1.25.9
+urllib3==1.26.5
 virtualenv==16.7.6
 pdfminer.six==20200402
 mojimoji==0.0.10
